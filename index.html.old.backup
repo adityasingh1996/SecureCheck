@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RootRiot</title>
+    <meta name="description" content="Streamline protocol security with RootRiot's structured checklists and intelligent exploit suggestions. Discover vulnerabilities and tools.">
+    <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" as="style">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" as="style">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" as="style">
+
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #002F6C;
+            --primary-light: #1a56db;
+            --primary-dark: #001a3e;
+            --secondary: #10b981;
+            --secondary-light: #03ffcd;
+            --secondary-dark: #059669;
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --neutral: #64748b;
+            --glass-light: rgba(255, 255, 255, 0.05);
+            --glass-dark: rgba(0, 0, 0, 0.2);
+            --transition-fast: 0.2s ease;
+            --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+            --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+            --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+
+        body {
+            background: var(--darker);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image:
+                radial-gradient(circle at 10% 20%, rgba(26, 86, 219, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 20%),
+                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8) 0%, var(--darker) 100%);
+        }
+
+        body.popup-open {
+            overflow: hidden; 
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        @media (min-width: 640px) {
+            .container {
+                padding: 0 1.5rem;
+            }
+        }
+
+        .glass-card {
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+            will-change: transform, box-shadow;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg), 0 0 15px rgba(26, 86, 219, 0.15);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all var(--transition-medium);
+            cursor: pointer;
+            border: none;
+            outline: none;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 47, 108, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 47, 108, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.25);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-light);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary-light);
+            background: rgba(26, 86, 219, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, var(--primary-light), var(--secondary-light));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 0;
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .navbar.scrolled {
+            padding: 0.75rem 0;
+            background: rgba(2, 6, 23, 0.95);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            background: rgba(26, 86, 219, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 47, 108, 0.2);
+            flex-shrink: 0;
+        }
+
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before, .hero::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .hero::before {
+            background: radial-gradient(circle at 70% 50%, rgba(26, 86, 219, 0.10), transparent 50%);
+        }
+        .hero::after {
+             background: radial-gradient(circle at 30% 60%, rgba(16, 185, 129, 0.10), transparent 50%);
+        }
+
+        .app-mockup {
+            position: relative;
+            z-index: 10;
+            transition: all var(--transition-smooth);
+            will-change: transform;
+            border-radius: 12px;
+            border: none;
+            overflow: hidden;
+            background-color: transparent;
+        }
+
+        .app-mockup img {
+            width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .features-list li {
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .features-list i {
+            color: var(--secondary);
+            margin-right: 0.75rem;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        footer {
+            background: rgba(2, 6, 23, 0.9);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 3rem 0 1.5rem;
+        }
+        @media (min-width: 768px) {
+            footer {
+                padding: 4rem 0 2rem;
+            }
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--darker);
+            width: 300px;
+            max-width: 80vw;
+            z-index: 1001;
+            padding: 1.5rem;
+            transform: translateX(100%);
+            transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.15);
+            overflow-y: auto;
+        }
+
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .menu-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .category-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.75rem;
+            background: rgba(26, 86, 219, 0.1);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            border: 1px solid rgba(26, 86, 219, 0.2);
+            color: var(--primary-light);
+        }
+
+        .glow-btn {
+            position: relative;
+            z-index: 1;
+        }
+
+        .glow-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 150%;
+            padding-bottom: 150%;
+            background: radial-gradient(circle, rgba(26, 86, 219, 0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translate(-50%, -50%) scale(0.8);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .glow-btn:hover::after {
+            opacity: 0.7;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .dashboard-mockup {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: transparent;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.7); 
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 1040; 
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-medium);
+        }
+
+        .popup-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .service-choice-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -60%); 
+            z-index: 1050; 
+            width: 90%;
+            max-width: 500px; 
+            background: rgba(15, 23, 42, 0.95); 
+            border-radius: 16px;
+            border: 1px solid var(--glass-light);
+            box-shadow: var(--shadow-xl);
+            padding: 2rem 2.5rem; 
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity var(--transition-medium), transform var(--transition-smooth);
+            will-change: opacity, transform;
+        }
+
+        .service-choice-popup.open {
+            opacity: 1;
+            transform: translate(-50%, -50%); 
+            pointer-events: auto;
+        }
+
+        .popup-close-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: transparent;
+            border: none;
+            color: var(--neutral);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            line-height: 1;
+            border-radius: 50%;
+            transition: color var(--transition-fast), background-color var(--transition-fast);
+        }
+        .popup-close-btn:hover {
+            color: var(--light);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+    </style>
+</head>
+
+<body>
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="flex items-center justify-between h-16">
+                <a href="#" class="text-2xl font-bold tracking-tight flex-shrink-0">
+                    <span class="text-primary-light">Root</span>Riot
+                </a>
+
+                <div class="hidden md:flex items-center space-x-6 lg:space-x-8">
+                    <a href="#features" class="text-gray-300 hover:text-white transition-colors">Features</a>
+                    <a href="#benefits" class="text-gray-300 hover:text-white transition-colors">Benefits</a>
+                    <a href="#faq" class="text-gray-300 hover:text-white transition-colors">FAQ</a>
+                </div>
+
+                <div class="hidden md:flex items-center space-x-4">
+                                       <button class="btn btn-primary text-sm px-4 py-2 js-get-started-btn">Get Started</button>
+                </div>
+
+                <button id="menuToggle" class="block md:hidden p-2 rounded-lg text-white focus:outline-none hover:bg-gray-800 transition-colors">
+                    <i class="bx bx-menu text-2xl"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="menu-overlay" id="menuOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="flex justify-between items-center mb-8">
+             <a href="#" class="text-2xl font-bold tracking-tight">
+                 <span class="text-primary-light">Root</span>Riot
+             </a>
+            <button id="menuClose" class="p-2 rounded-lg text-white focus:outline-none hover:bg-gray-800 transition-colors">
+                <i class="bx bx-x text-2xl"></i>
+            </button>
+        </div>
+
+        <div class="flex flex-col space-y-5">
+            <a href="#features" class="text-lg font-medium text-gray-300 hover:text-white transition-colors py-2">Features</a>
+            <a href="#benefits" class="text-lg font-medium text-gray-300 hover:text-white transition-colors py-2">Benefits</a>
+            <a href="#faq" class="text-lg font-medium text-gray-300 hover:text-white transition-colors py-2">FAQ</a>
+
+            <div class="pt-6 border-t border-gray-800 space-y-4">
+
+                 <button class="btn btn-primary w-full js-get-started-btn">Get Started</button>
+            </div>
+        </div>
+    </div>
+
+    <section class="hero pt-24 md:pt-28 lg:pt-32">
+        <div class="container">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 md:gap-16 items-center">
+                <div class="lg:col-span-6 text-center lg:text-left fade-in" id="heroContent">
+                    <span class="category-badge mb-4">Protocol Security Testing</span>
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold mb-6 leading-tight">
+                        Protocol Testing<span class="gradient-text"> Toolkit</span>
+                    </h1>
+                    <p class="text-lg sm:text-xl text-gray-300 mb-8 max-w-xl mx-auto lg:mx-0">
+                        Streamline security assessments with structured checklists and intelligent exploit suggestions. Track procedures, uncover vulnerabilities, and find the right tools.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-4 sm:space-y-0 sm:space-x-4 mb-12">
+                         <button class="btn btn-primary glow-btn py-3 px-6 sm:px-8 text-base sm:text-lg w-full sm:w-auto js-get-started-btn">
+                             <i class="bx bx-rocket mr-2"></i> Get Started Free
+                         </button>
+                        <a href="#demo" class="btn btn-outline py-3 px-6 sm:px-8 text-base sm:text-lg w-full sm:w-auto">
+                            <i class="bx bx-play-circle mr-2"></i> Watch Demo
+                        </a>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center lg:justify-start items-center gap-x-6 gap-y-4 sm:gap-x-8">
+                        <div class="text-center">
+                            <div class="text-2xl sm:text-3xl font-bold text-white">100+</div>
+                            <div class="text-xs sm:text-sm text-gray-400 uppercase tracking-wider">Protocols</div>
+                        </div>
+                        <div class="hidden sm:block h-10 w-px bg-gray-800"></div>
+                        <div class="text-center">
+                            <div class="text-2xl sm:text-3xl font-bold text-white">500+</div>
+                            <div class="text-xs sm:text-sm text-gray-400 uppercase tracking-wider">Test Procedures</div>
+                        </div>
+                        <div class="hidden sm:block h-10 w-px bg-gray-800"></div>
+                        <div class="text-center">
+                            <div class="text-2xl sm:text-3xl font-bold text-white">250+</div>
+                            <div class="text-xs sm:text-sm text-gray-400 uppercase tracking-wider">Security Tools</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-6 relative fade-in mt-10 lg:mt-0" id="heroImage">
+                    <div class="app-mockup dashboard-mockup">
+                        <img src="./images/doggy.png" alt="RootRiot Dashboard" class="rounded-lg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="features" class="py-16 md:py-20 lg:py-24">
+        <div class="container">
+            <div class="text-center max-w-3xl mx-auto mb-12 md:mb-16 fade-in">
+                <span class="category-badge">Powerful Features</span>
+                <h2 class="text-3xl md:text-4xl font-bold my-4">Your Toolkit for Protocol Security</h2>
+                <p class="text-gray-300 text-base md:text-lg">RootRiot offers structured checklists and smart exploit suggestions to enhance your network protocol testing workflow.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 feature-grid">
+                <div class="glass-card feature-card fade-in p-6 lg:p-8">
+                     <div class="feature-icon" style="background-color: rgba(245, 158, 11, 0.1);">
+                         <i class="bx bx-list-check text-3xl text-yellow-500"></i> </div>
+                     <h3 class="text-xl font-semibold mb-3">Testing Checklists</h3>
+                     <p class="text-gray-300 text-sm md:text-base mb-5">Step-by-step procedures for thorough protocol examination and validation.</p>
+                     <ul class="features-list mt-auto text-sm md:text-base">
+                         <li><i class="bx bx-check text-lg"></i><span>Interactive progress tracking</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Detailed testing instructions</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Command-line examples included</span></li>
+                     </ul>
+                 </div>
+
+                <div class="glass-card feature-card fade-in p-6 lg:p-8">
+                     <div class="feature-icon" style="background-color: rgba(220, 38, 38, 0.1);">
+                        <i class='bx bx-bug-alt text-3xl text-red-500'></i> </div>
+                     <h3 class="text-xl font-semibold mb-3">Exploit Suggester</h3> <p class="text-gray-300 text-sm md:text-base mb-5">Get intelligent suggestions for potential exploits based on protocol and known vulnerabilities.</p>
+                     <ul class="features-list mt-auto text-sm md:text-base">
+                         <li><i class="bx bx-check text-lg"></i><span>Context-aware suggestions</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Links to relevant CVEs & tools</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Prioritized by potential impact</span></li>
+                     </ul>
+                 </div>
+
+                 <div class="glass-card feature-card fade-in p-6 lg:p-8">
+                     <div class="feature-icon" style="background-color: rgba(16, 185, 129, 0.1);">
+                         <i class="bx bx-wrench text-3xl text-green-500"></i>
+                     </div>
+                     <h3 class="text-xl font-semibold mb-3">Tool Recommendations</h3>
+                     <p class="text-gray-300 text-sm md:text-base mb-5">Discover relevant security tools for testing specific protocols and vulnerabilities.</p>
+                     <ul class="features-list mt-auto text-sm md:text-base">
+                         <li><i class="bx bx-check text-lg"></i><span>Categorized by function</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Easy copy-paste commands</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Direct links to documentation</span></li>
+                     </ul>
+                 </div>
+
+                 <div class="glass-card feature-card fade-in p-6 lg:p-8">
+                     <div class="feature-icon" style="background-color: rgba(79, 70, 229, 0.1);">
+                         <i class="bx bx-shield-quarter text-3xl text-indigo-500"></i> </div>
+                     <h3 class="text-xl font-semibold mb-3">Vulnerability Database</h3> <p class="text-gray-300 text-sm md:text-base mb-5">Access a comprehensive, up-to-date library of known vulnerabilities for each protocol.</p>
+                     <ul class="features-list mt-auto text-sm md:text-base">
+                          <li><i class="bx bx-check text-lg"></i><span>Searchable by CVE, keyword</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Severity and impact details</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Regularly updated data</span></li>
+                     </ul>
+                 </div>
+
+                <div class="glass-card feature-card fade-in p-6 lg:p-8">
+                     <div class="feature-icon" style="background-color: rgba(236, 72, 153, 0.1);">
+                         <i class="bx bx-search-alt text-3xl text-pink-500"></i> </div>
+                     <h3 class="text-xl font-semibold mb-3">Powerful Search & Filter</h3>
+                     <p class="text-gray-300 text-sm md:text-base mb-5">Quickly find protocols, vulnerabilities, or tools using names, ports, or keywords.</p>
+                     <ul class="features-list mt-auto text-sm md:text-base">
+                         <li><i class="bx bx-check text-lg"></i><span>Real-time filtering</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Filter by category or port</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Intuitive interface</span></li>
+                     </ul>
+                 </div>
+
+                 <div class="glass-card feature-card fade-in p-6 lg:p-8">
+                     <div class="feature-icon" style="background-color: rgba(37, 99, 235, 0.1);">
+                         <i class="bx bx-chart text-3xl text-blue-600"></i>
+                     </div>
+                     <h3 class="text-xl font-semibold mb-3">Progress Tracking</h3>
+                     <p class="text-gray-300 text-sm md:text-base mb-5">Monitor your checklist completion with visual indicators and statistics.</p>
+                     <ul class="features-list mt-auto text-sm md:text-base">
+                         <li><i class="bx bx-check text-lg"></i><span>Percentage-based progress</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Clear visual feedback</span></li>
+                         <li><i class="bx bx-check text-lg"></i><span>Save state across sessions</span></li>
+                     </ul>
+                 </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="demo" class="py-16 md:py-20 lg:py-24 bg-gray-900 bg-opacity-30">
+        <div class="container">
+            <div class="max-w-3xl mx-auto text-center mb-12 md:mb-16 fade-in">
+                <span class="category-badge">See It In Action</span>
+                <h2 class="text-3xl md:text-4xl font-bold my-4">How RootRiot Works</h2>
+                <p class="text-gray-300 text-base md:text-lg">Our streamlined interface makes protocol security testing more efficient, whether using checklists or exploring exploits.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-16 items-center">
+                <div class="lg:col-span-5 fade-in space-y-8 md:space-y-10">
+                    <div>
+                         <div class="flex items-center mb-4">
+                             <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-white font-bold text-lg md:text-xl mr-4">1</div>
+                             <h3 class="text-xl md:text-2xl font-semibold">Select a Protocol</h3>
+                         </div>
+                         <p class="text-gray-300 ml-14 md:ml-16 text-sm md:text-base">
+                             Browse or search our comprehensive database, organized by category and port number.
+                         </p>
+                     </div>
+
+                      <div>
+                         <div class="flex items-center mb-4">
+                             <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-white font-bold text-lg md:text-xl mr-4">2</div>
+                             <h3 class="text-xl md:text-2xl font-semibold">Choose Your Path</h3>
+                         </div>
+                         <p class="text-gray-300 ml-14 md:ml-16 text-sm md:text-base">
+                             Opt for the structured Checklist for systematic testing or explore potential weaknesses with the Exploit Suggester.
+                         </p>
+                     </div>
+
+                      <div>
+                         <div class="flex items-center mb-4">
+                              <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-white font-bold text-lg md:text-xl mr-4">3</div>
+                             <h3 class="text-xl md:text-2xl font-semibold">Execute & Analyze</h3>
+                         </div>
+                         <p class="text-gray-300 ml-14 md:ml-16 text-sm md:text-base">
+                             Follow checklist steps, using provided tools and commands, or investigate suggested exploits and their potential impact.
+                         </p>
+                     </div>
+
+                     <div>
+                         <div class="flex items-center mb-4">
+                              <div class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary flex-shrink-0 flex items-center justify-center text-white font-bold text-lg md:text-xl mr-4">4</div>
+                             <h3 class="text-xl md:text-2xl font-semibold">Track & Report</h3>
+                         </div>
+                         <p class="text-gray-300 ml-14 md:ml-16 text-sm md:text-base">
+                             Monitor checklist progress or document findings from exploit analysis for comprehensive reporting.
+                         </p>
+                     </div>
+                </div>
+
+                <div class="lg:col-span-7 fade-in">
+                    <div class="relative rounded-xl overflow-hidden shadow-2xl border border-gray-700">
+                        <video controls playsinline webkit-playsinline muted class="w-full rounded-xl block aspect-video">
+                             <source src="https://cdn.jsdelivr.net/gh/adityasingh1996/RootRiot@main/video/RootRiot-demo.mp4" type="video/mp4">
+                             Your browser does not support the video tag.
+                         </video>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 md:py-20 lg:py-24">
+        <div class="container">
+            <div class="glass-card p-8 md:p-12 relative overflow-hidden fade-in">
+                <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
+                    <div class="absolute top-0 -right-10 w-40 h-40 md:w-60 md:h-60 bg-primary opacity-15 rounded-full filter blur-3xl"></div>
+                    <div class="absolute bottom-0 -left-10 w-40 h-40 md:w-60 md:h-60 bg-secondary opacity-15 rounded-full filter blur-3xl"></div>
+                </div>
+
+                <div class="relative z-10 max-w-3xl mx-auto text-center">
+                    <h2 class="text-3xl sm:text-4xl lg:text-5xl font-bold mb-5">Ready to elevate your protocol testing?</h2>
+                    <p class="text-lg sm:text-xl text-gray-300 mb-8">Access comprehensive checklists and smart exploit suggestions with RootRiot.</p>
+
+                    <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-6">
+                         <button class="btn btn-primary glow-btn py-3 px-6 md:py-4 md:px-8 text-base md:text-lg w-full sm:w-auto js-get-started-btn">
+                             <i class="bx bx-rocket mr-2"></i> Get Started
+                         </button>
+                    </div>
+
+                    <p class="mt-6 text-sm text-gray-400">No credit card required. It's Free!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-12 gap-8 mb-10 md:mb-12">
+                 <div class="sm:col-span-2 md:col-span-4">
+                     <h2 class="text-2xl font-bold mb-4"><span class="text-primary-light">Root</span>Riot</h2>
+                     <p class="text-gray-400 text-sm mb-6">Comprehensive protocol security testing with checklists and exploit suggestions.</p> <div class="flex space-x-4">
+                         <a href="#" aria-label="Twitter" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center text-gray-300 hover:bg-primary hover:text-white transition-all">
+                             <i class="bx bxl-twitter text-lg"></i>
+                         </a>
+                         <a href="#" aria-label="LinkedIn" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center text-gray-300 hover:bg-primary hover:text-white transition-all">
+                             <i class="bx bxl-linkedin text-lg"></i>
+                         </a>
+                         <a href="#" aria-label="GitHub" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center text-gray-300 hover:bg-primary hover:text-white transition-all">
+                             <i class="bx bxl-github text-lg"></i>
+                         </a>
+                     </div>
+                 </div>
+
+                 <div class="md:col-span-2">
+                     <h3 class="text-base font-semibold mb-4 text-gray-200">Product</h3>
+                     <ul class="space-y-2 text-sm">
+                         <li><a href="#features" class="text-gray-400 hover:text-white transition-colors">Features</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Integrations</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Changelog</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Roadmap</a></li>
+                     </ul>
+                 </div>
+
+                 <div class="md:col-span-2">
+                       <h3 class="text-base font-semibold mb-4 text-gray-200">Resources</h3>
+                     <ul class="space-y-2 text-sm">
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Documentation</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Blog</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Guides</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">API Reference</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Community</a></li>
+                     </ul>
+                 </div>
+
+                 <div class="md:col-span-2">
+                     <h3 class="text-base font-semibold mb-4 text-gray-200">Company</h3>
+                     <ul class="space-y-2 text-sm">
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">About</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Careers</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Partners</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Legal</a></li>
+                     </ul>
+                 </div>
+
+                 <div class="md:col-span-2">
+                     <h3 class="text-base font-semibold mb-4 text-gray-200">Support</h3>
+                       <ul class="space-y-2 text-sm">
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Help Center</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Status</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Report a Bug</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Feature Request</a></li>
+                         <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Contact Support</a></li>
+                     </ul>
+                 </div>
+            </div>
+
+            <div class="pt-6 md:pt-8 border-t border-gray-800">
+                <div class="flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-500 text-xs sm:text-sm order-2 md:order-1 mt-4 md:mt-0">&copy; 2025 RootRiot. All rights reserved.</p>
+                    <div class="flex space-x-4 sm:space-x-6 order-1 md:order-2 text-xs sm:text-sm">
+                        <a href="#" class="text-gray-500 hover:text-gray-300 transition-colors">Privacy Policy</a>
+                        <a href="#" class="text-gray-500 hover:text-gray-300 transition-colors">Terms of Service</a>
+                        <a href="#" class="text-gray-500 hover:text-gray-300 transition-colors">Cookie Policy</a>
+                    </div>
+                </div>
+
+                <p class="text-center text-gray-500 text-xs sm:text-sm mt-4">
+    Made with <span style="color: red;">&#10084;</span> by Aditya Singh
+</p>                 </div>
+        </div>
+    </footer>
+
+    <div class="popup-overlay" id="popupOverlay"></div>
+    <div class="service-choice-popup glass-card" id="serviceChoicePopup">
+        <button class="popup-close-btn" id="popupCloseBtn" aria-label="Close">
+            <i class='bx bx-x'></i>
+        </button>
+        <h3 class="text-2xl font-semibold text-center mb-6 text-white">Choose a Service</h3>
+        <p class="text-center text-gray-300 mb-8 text-sm">Select which RootRiot tool you'd like to start with.</p>
+        <div class="flex flex-col sm:flex-row gap-4">
+            <button id="goToChesklistBtn" class="btn btn-primary w-full py-3 text-base flex-1 items-center justify-center">
+                <i class='bx bx-list-check text-xl mr-2'></i> Checklist
+            </button>
+            <button id="goToExploitBtn" class="btn btn-secondary w-full py-3 text-base flex-1 items-center justify-center">
+                <i class='bx bx-bug-alt text-xl mr-2'></i> Exploit Suggester
+            </button>
+        </div>
+    </div>
+    <script>
+
+        const navbar = document.getElementById('navbar');
+        let lastScrollY = window.scrollY;
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+            lastScrollY = window.scrollY;
+        });
+
+        const menuToggle = document.getElementById('menuToggle');
+        const menuClose = document.getElementById('menuClose');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const body = document.body;
+
+        const openMenu = () => {
+            mobileMenu.classList.add('open');
+            menuOverlay.classList.add('open');
+            body.style.overflow = 'hidden';
+        };
+
+        const closeMenu = () => {
+            mobileMenu.classList.remove('open');
+            menuOverlay.classList.remove('open');
+             body.style.overflow = '';
+        };
+
+        menuToggle.addEventListener('click', openMenu);
+        menuClose.addEventListener('click', closeMenu);
+        menuOverlay.addEventListener('click', closeMenu);
+
+        const mobileNavLinks = mobileMenu.querySelectorAll('a');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+
+                if (link.getAttribute('href')?.startsWith('#')) {
+                     closeMenu();
+                }
+
+            });
+        });
+
+        const observeElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        observeElements.forEach(element => {
+            observer.observe(element);
+        });
+
+        requestAnimationFrame(() => {
+             const heroContent = document.getElementById('heroContent');
+             const heroImage = document.getElementById('heroImage');
+             if (heroContent) heroContent.classList.add('visible');
+             if (heroImage) heroImage.classList.add('visible');
+        });
+
+        const getStartedBtns = document.querySelectorAll('.js-get-started-btn');
+        const servicePopup = document.getElementById('serviceChoicePopup');
+        const popupOverlay = document.getElementById('popupOverlay');
+        const popupCloseBtn = document.getElementById('popupCloseBtn');
+        const goToChesklistBtn = document.getElementById('goToChesklistBtn');
+        const goToExploitBtn = document.getElementById('goToExploitBtn');
+
+        const openPopup = () => {
+            servicePopup.classList.add('open');
+            popupOverlay.classList.add('open');
+            body.classList.add('popup-open'); 
+        };
+
+        const closePopup = () => {
+            servicePopup.classList.remove('open');
+            popupOverlay.classList.remove('open');
+             body.classList.remove('popup-open');
+        };
+
+        getStartedBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault(); 
+                openPopup();
+            });
+        });
+
+        popupCloseBtn.addEventListener('click', closePopup);
+        popupOverlay.addEventListener('click', closePopup);
+
+        const checklistUrl = '/RootRiot'; 
+        const exploitSuggesterUrl = '/exploitSuggester'; 
+
+        goToChesklistBtn.addEventListener('click', () => {
+            window.location.href = checklistUrl;
+        });
+
+        goToExploitBtn.addEventListener('click', () => {
+             window.location.href = exploitSuggesterUrl;
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && servicePopup.classList.contains('open')) {
+                closePopup();
+            }
+        });
+
+    </script>
+</body>
+</html>

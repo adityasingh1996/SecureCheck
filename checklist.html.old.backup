@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RootRiot - Protocol Checklist</title>
+
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" as="style">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" as="style">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" as="style">
+	<link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css" media="print" onload="this.media='all'">
+
+    <style>
+
+        :root {
+            --primary: #002F6C;
+            --primary-dark: #002F6C;
+            --primary-light: #a78bfa;
+            --primary-alpha: rgba(139, 92, 246, 0.2);
+            --secondary: #10b981;
+            --secondary-alpha: rgba(16, 185, 129, 0.2);
+            --dark: #0f172a;
+            --darker: #020617;
+            --light: #f8fafc;
+            --neutral: #64748b;
+            --glass-light: rgba(255, 255, 255, 0.05);
+            --glass-dark: rgba(0, 0, 0, 0.2);
+            --card-bg: rgba(15, 23, 42, 0.9);
+            --sidebar-bg: rgba(2, 6, 23, 0.95);
+            --sidebar-bg-solid: var(--darker);
+            --transition-fast: 0.2s ease;
+            --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-smooth: 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+            --transition-spring: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+            --shadow-xl: 0 12px 24px rgba(0, 0, 0, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Manrope', system-ui, -apple-system, sans-serif; }
+        html { scroll-behavior: smooth; }
+        body { 
+            background: var(--darker); 
+            color: var(--light); 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+            background-image: radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.02) 0%, transparent 15%), 
+                             radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.02) 0%, transparent 15%),
+                             radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8) 0%, var(--darker) 100%);
+            will-change: transform;
+        }
+
+        .glass-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: var(--shadow-md);
+            transition: transform var(--transition-medium), box-shadow var(--transition-medium);
+            will-change: transform, box-shadow;
+            transform: translate3d(0, 0, 0);
+        }
+
+        .glass-inset {
+            background: rgba(2, 6, 23, 0.5);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.3), inset -1px -1px 2px rgba(255, 255, 255, 0.03);
+        }
+
+        @media (min-width: 1025px) {
+            .glass-effect {
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+            }
+
+            .glass-card:hover {
+                transform: translateY(-3px);
+                box-shadow: var(--shadow-lg), 0 0 15px rgba(139, 92, 246, 0.15);
+            }
+        }
+
+        .sidebar {
+            background: var(--sidebar-bg);
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 2rem 1.5rem;
+            width: 300px;
+            z-index: 50;
+            transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            border-right: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            flex-direction: column;
+            overflow-y: hidden;
+            will-change: transform;
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                background: var(--sidebar-bg-solid) !important;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+        }
+
+        .content-area {
+            margin-left: 300px;
+            padding: 2rem;
+            min-height: 100vh;
+            transition: margin-left 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            z-index: 1;
+            will-change: margin-left;
+        }
+
+        @media (max-width: 1024px) {
+            .content-area {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-area {
+                padding: 1.5rem 1rem;
+            }
+            header h1 {
+                font-size: 1.75rem !important;
+            }
+            .card-header {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                padding: 1.5rem 1rem !important;
+            }
+            .card-header > div:last-child {
+                width: 100%;
+                justify-content: space-between;
+                margin-top: 1rem;
+            }
+            .progress-container {
+                width: 100% !important;
+            }
+        }
+
+        .protocol-card {
+            transition: opacity var(--transition-medium), transform var(--transition-medium);
+            transform: translateZ(0);
+            will-change: transform, opacity;
+            backface-visibility: hidden;
+            opacity: 0;
+            contain: content;
+        }
+
+        .card-header {
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+        }
+
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            padding: 0 20px 0 20px;
+            transition: max-height var(--transition-medium), 
+                        opacity var(--transition-medium), 
+                        padding var(--transition-medium);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            will-change: max-height, opacity, padding;
+        }
+
+        .protocol-card.expanded .card-content {
+            max-height: 1500px;
+            opacity: 1;
+            visibility: visible;
+            padding: 0 20px 20px 20px;
+            transform: translateY(0);
+        }
+
+        .toggle-container {
+            position: relative;
+            width: 50px;
+            height: 26px;
+            flex-shrink: 0;
+            min-width: 50px;
+        }
+        .toggle-input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(15, 23, 42, 0.7);
+            transition: all var(--transition-medium);
+            border-radius: 34px;
+            box-shadow: inset 2px 2px 4px var(--glass-dark), inset -2px -2px 4px var(--glass-light);
+            overflow: hidden;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background: var(--light);
+            transition: all var(--transition-spring);
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+            will-change: transform;
+        }
+        .toggle-slider::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-dark) 0%, var(--primary) 100%);
+            transition: all var(--transition-medium);
+            opacity: 0;
+            will-change: opacity, left;
+        }
+        .toggle-input:checked + .toggle-slider::after {
+            left: 0;
+            opacity: 1;
+        }
+        .toggle-input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+            background: white;
+        }
+        .toggle-input:checked + .toggle-slider {
+            box-shadow: 0 0 8px var(--primary-alpha);
+        }
+        .checkmark-animate {
+            transition: all var(--transition-spring);
+            display: inline-block;
+            vertical-align: top;
+            margin-top: 0.1rem;
+        }
+        .toggle-input:checked ~ .checkmark-animate {
+            transform: scale(1.05);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 10px;
+            box-shadow: inset 2px 2px 4px var(--glass-dark), inset -2px -2px 4px var(--glass-light);
+            margin: 1rem 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary));
+            border-radius: 10px;
+            transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+            position: relative;
+            overflow: hidden;
+            width: 0;
+            will-change: width;
+        }
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.2) 50%, transparent 100%);
+            animation: progressShine 2.5s infinite;
+            animation-play-state: paused;
+        }
+        .progress-bar.animate::after {
+            animation-play-state: running;
+        }
+
+        @keyframes progressShine {
+            to { left: 100%; }
+        }
+
+        .completion-percentage {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .progress-container:hover .completion-percentage {
+            opacity: 1;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            box-shadow: 0 2px 6px rgba(139, 92, 246, 0.2);
+            position: relative;
+            overflow: hidden;
+            color: white;
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .category-filter {
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            position: relative;
+            overflow: hidden;
+            font-weight: 500;
+            font-size: 0.85rem;
+        }
+
+        .category-filter:hover {
+            background: rgba(15, 23, 42, 0.5);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .category-filter.active {
+            background: var(--active-filter-bg, var(--primary));
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+            color: white;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s var(--transition-smooth) forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-animate {
+            transform: translateY(15px);
+            transition: opacity var(--transition-medium), transform var(--transition-medium);
+            opacity: 0;
+        }
+
+        .section-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .protocol-card.section-animate {
+            opacity: 0;
+        }
+
+        .protocol-card.section-animate.visible {
+            opacity: 1;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-dark);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        .search-container {
+            position: relative;
+            margin-bottom: 1.25rem;
+        }
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            border-radius: 12px;
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            transition: all var(--transition-medium);
+        }
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px var(--primary-alpha);
+            background: rgba(15, 23, 42, 0.5);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--neutral);
+            transition: color 0.3s ease;
+        }
+        .search-input:focus + .search-icon {
+            color: var(--primary);
+        }
+
+        .nav-links {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            margin-bottom: 1rem;
+            max-height: calc(100vh - 130px);
+        }
+
+        .protocol-nav-item {
+            position: relative;
+            overflow: hidden;
+            padding-left: 1rem;
+            margin-bottom: 0.6rem;
+            border-radius: 12px;
+            transition: all var(--transition-medium);
+            padding-top: 0.75rem;
+            padding-bottom: 0.75rem;
+            padding-right: 0.75rem;
+        }
+
+        .protocol-nav-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--nav-item-color, var(--primary));
+            border-top-left-radius: inherit;
+            border-bottom-left-radius: inherit;
+        }
+
+        .protocol-nav-item:hover {
+            transform: translateX(5px);
+            background: rgba(15, 23, 42, 0.8);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .protocol-nav-item.hidden {
+            display: none;
+        }
+
+        #mainCategoryFiltersContainer {
+            margin-bottom: 1.5rem;
+        }
+
+        .category-indicator {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-top-left-radius: 16px;
+            border-bottom-left-radius: 16px;
+        }
+
+        .expand-btn {
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-medium);
+        }
+        .expand-btn:hover {
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+        }
+        .expand-btn i {
+            transition: transform var(--transition-medium);
+            will-change: transform;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 1rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            box-shadow: var(--shadow-lg);
+            transition: all var(--transition-medium);
+        }
+
+        .logo {
+            position: relative;
+            display: inline-block;
+        }
+        .logo::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: -3px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-dark), var(--primary), var(--primary-dark));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s var(--transition-smooth);
+        }
+        .logo:hover::after {
+            transform: scaleX(1);
+        }
+
+        .menu-toggle {
+            transition: all var(--transition-medium);
+            z-index: 60;
+        }
+        .menu-toggle:hover {
+            transform: rotate(90deg);
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+        }
+
+        li.list-item-animate {
+            transition: background 0.3s ease, transform 0.3s ease;
+            border-radius: 8px;
+            padding: 0.5rem;
+            align-items: flex-start;
+            opacity: 0;
+        }
+
+        .protocol-card.expanded li.list-item-animate {
+            opacity: 1;
+        }
+
+        li.list-item-animate:hover:not(.list-item-no-checkbox-container) {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateX(5px);
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 2rem;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .pagination-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--light);
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--transition-medium);
+        }
+        .pagination-btn:hover:not(:disabled) {
+            background: rgba(15, 23, 42, 0.5);
+            box-shadow: 0 0 10px rgba(139, 92, 246, 0.2);
+            transform: translateY(-2px);
+        }
+        .pagination-btn.active {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+        }
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .pagination-ellipsis {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            color: var(--neutral);
+        }
+
+        .port-badge {
+            font-family: 'Courier New', monospace;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: inline-block;
+        }
+
+        .command-inline {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: rgba(2, 6, 23, 0.7);
+            color: var(--primary-light);
+            padding: 0.15em 0.5em;
+            border-radius: 5px;
+            font-size: 0.875em;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            display: inline-block;
+            vertical-align: middle;
+            word-break: break-word;
+            margin: 0 0.1em;
+            box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .copy-command-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            vertical-align: middle;
+            line-height: 1;
+            color: var(--neutral);
+            padding: 0.25rem;
+            border-radius: 4px;
+        }
+
+        .copy-command-btn:hover {
+            color: var(--primary-light);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .copy-command-btn.text-secondary {
+            color: var(--secondary) !important;
+        }
+
+        .loading-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            font-weight: 500;
+            color: var(--neutral);
+        }
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(139, 92, 246, 0.2);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-indicator.error {
+            color: #f87171;
+        }
+        .loading-indicator.error .loading-spinner {
+            display: none;
+        }
+
+        .protocol-card.highlighting {
+            transition: box-shadow 0.3s ease-in-out !important;
+        }
+
+        @media (max-width: 640px) {
+            .category-filter {
+                padding: 0.3rem 0.8rem;
+                font-size: 0.75rem;
+            }
+            .category-badge {
+                font-size: 0.65rem;
+                padding: 0.2rem 0.6rem;
+            }
+            .progress-container {
+                height: 10px;
+            }
+            .card-header {
+                padding: 1.2rem 1rem !important;
+            }
+            .card-header h2 {
+                font-size: 1.5rem !important;
+            }
+            .protocol-card .grid {
+                grid-template-columns: 1fr !important;
+                display: block !important;
+            }
+            .glass-inset {
+                margin-bottom: 1rem;
+            }
+            .toggle-container {
+                min-width: 40px;
+                width: 40px;
+                height: 22px;
+            }
+            .toggle-slider:before {
+                height: 14px;
+                width: 14px;
+            }
+            .toggle-input:checked + .toggle-slider:before {
+                transform: translateX(18px);
+            }
+            .nav-links {
+                max-height: calc(100vh - 110px);
+            }
+            .list-item-no-checkbox {
+                margin-left: 0.25rem;
+            }
+            .protocol-nav-item {
+                padding-left: 0.75rem !important;
+                padding-top: 0.75rem !important;
+                padding-bottom: 0.75rem !important;
+                padding-right: 0.75rem !important;
+            }
+            li.list-item-animate {
+                padding: 0.75rem 0.5rem;
+                margin-bottom: 0.75rem;
+            }
+            .pagination-btn {
+                width: 36px;
+                height: 36px;
+            }
+            .expand-btn {
+                width: 36px;
+                height: 36px;
+                padding: 0.5rem !important;
+            }
+            .menu-toggle {
+                width: 40px;
+                height: 40px;
+                padding: 0.5rem !important;
+            }
+        }
+
+        @media (min-width: 1920px) {
+            .content-area {
+                max-width: 1600px;
+                margin-left: 300px;
+                margin-right: auto;
+                margin-left: auto;
+                padding-left: 340px; 
+            }
+
+            #protocolCards {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(700px, 1fr));
+                gap: 1.5rem;
+            }
+        }
+
+        @media (min-width: 2560px) {
+            .content-area {
+                max-width: 2200px;
+            }
+
+            #protocolCards {
+                grid-template-columns: repeat(auto-fill, minmax(800px, 1fr));
+            }
+        }
+
+        @media (hover: none) and (pointer: coarse) {
+            .glass-card:hover,
+            .category-filter:hover,
+            .expand-btn:hover,
+            .pagination-btn:hover:not(:disabled),
+            .protocol-nav-item:hover,
+            .no-results:hover,
+            li.list-item-animate:hover {
+                transform: none;
+                box-shadow: none;
+                background: inherit;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            ::before,
+            ::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+
+            .progress-bar::after {
+                animation: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <button id="menuToggle" class="fixed top-4 left-4 z-50 lg:hidden menu-toggle p-2 w-10 h-10 flex items-center justify-center glass-dark rounded-full text-white focus:outline-none">
+        <i class="bx bx-menu text-2xl"></i>
+    </button>
+
+    <aside class="sidebar" id="sidebar">
+
+        <div class="flex flex-col mb-8 flex-shrink-0">
+            <div class="flex items-center justify-between">
+                <h1 class="text-2xl font-bold tracking-tight logo">
+                    <a href="/" class="text-primary">RootRiot</a>
+                </h1>
+                <button id="mobileClose" class="lg:hidden p-1 rounded-full hover:bg-gray-700 focus:outline-none text-white">
+                    <i class="bx bx-x text-2xl"></i>
+                </button>
+            </div>
+            <div class="flex items-center mt-2">
+                <p class="text-xs text-gray-400 tracking-wide relative group">
+                    <span class="text-primary">◈</span> Created by <span class="underline cursor-pointer text-gray-300 hover:text-primary transition-colors duration-300">Aditya Singh</span>
+                    <span class="absolute bottom-full left-0 mb-2 w-48 p-2 bg-gray-800 rounded-md shadow-lg text-xs opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-10">
+                        https:
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <div class="search-container flex-shrink-0">
+            <input type="text" id="search" class="search-input" placeholder="Search protocols or ports...">
+            <i class="bx bx-search search-icon"></i>
+        </div>
+
+        <div class="protocol-section flex-grow flex flex-col min-h-0">
+            <h2 class="text-lg font-semibold mb-2 text-neutral-300 flex-shrink-0">Protocols</h2>
+            <div class="nav-links space-y-2" id="protocolNav">
+
+            </div>
+        </div>
+    </aside>
+
+    <main class="content-area" id="mainContent">
+        <header class="mb-6 md:mb-10 fade-in" style="animation-delay: 0.1s;">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">Protocol Security Checklist</h1>
+            <p class="text-gray-400">Track testing procedures and discover vulnerabilities & tools for network protocols.</p>
+        </header>
+
+        <div id="mainCategoryFiltersContainer" class="mb-6 md:mb-8">
+            <h2 class="text-lg font-semibold mb-3 text-neutral-300">Filter by Category:</h2>
+            <div class="category-filters" id="categoryFilters">
+                <button class="category-filter active" data-category="all">All</button>
+
+            </div>
+        </div>
+
+        <div class="loading-indicator col-span-full" id="loadingIndicator" style="display: none;">
+            <div class="loading-spinner"></div>
+            <span class="loading-text">Loading protocols...</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6" id="protocolCards">
+
+        </div>
+
+        <div class="pagination-container" id="paginationContainer">
+
+        </div>
+    </main>
+
+    <script>
+
+        const DATA_URL = '/Data';
+
+        let protocolData = []; 
+
+        const appState = {
+            currentFilter: 'all',
+            searchTerm: '',
+            checkedItems: {},
+            currentPage: 1,
+            itemsPerPage: 5,
+            debug: false, 
+            expandedCards: new Set(),
+            isMobile: false,
+            observer: null,
+            renderInProgress: false,
+            lastItemRendered: 0,
+            supportsBlur: true,
+            hasWideScreen: false
+        };
+
+        function debug(message) { if (appState.debug) console.log(`[DEBUG] ${message}`); }
+
+        const debounce = (func, delay) => {
+            let controller = new AbortController();
+            return (...args) => {
+                controller.abort(); 
+                controller = new AbortController();
+                const signal = controller.signal;
+
+                return new Promise((resolve) => {
+                    const timeoutId = setTimeout(() => {
+                        if (!signal.aborted) {
+                            resolve(func(...args));
+                        }
+                    }, delay);
+
+                    signal.addEventListener('abort', () => {
+                        clearTimeout(timeoutId);
+                    });
+                });
+            };
+        };
+
+        function detectFeatures() {
+
+            const supportsBlur = CSS.supports('backdrop-filter', 'blur(1px)') ||
+                                CSS.supports('-webkit-backdrop-filter', 'blur(1px)');
+
+            const hasWideScreen = window.innerWidth >= 1920;
+
+            appState.supportsBlur = supportsBlur;
+            appState.hasWideScreen = hasWideScreen;
+
+            document.documentElement.classList.toggle('supports-blur', supportsBlur);
+            document.documentElement.classList.toggle('wide-screen', hasWideScreen);
+
+            debug(`Feature detection: supportsBlur=${supportsBlur}, hasWideScreen=${hasWideScreen}`);
+
+            if (window.innerWidth >= 2560) {
+                appState.itemsPerPage = 8; 
+            } else if (window.innerWidth >= 1920) {
+                appState.itemsPerPage = 6; 
+            } else if (window.innerWidth >= 1280) {
+                appState.itemsPerPage = 5; 
+            } else if (window.innerWidth >= 768) {
+                appState.itemsPerPage = 4; 
+            } else {
+                appState.itemsPerPage = 3; 
+            }
+        }
+
+        async function fetchProtocolData() {
+            debug(`Fetching data from ${DATA_URL}...`);
+            const loadingIndicator = document.getElementById('loadingIndicator');
+            const loadingText = loadingIndicator?.querySelector('.loading-text');
+
+            if (loadingIndicator) {
+                loadingIndicator.classList.remove('error');
+                if (loadingText) loadingText.textContent = 'Loading protocols...';
+                loadingIndicator.style.display = 'flex';
+            }
+
+            try {
+                const cacheKey = 'RootRiotData';
+                const cacheTime = 'RootRiotDataTime';
+                const cachedTime = localStorage.getItem(cacheTime);
+                const now = Date.now();
+
+                if (cachedTime && (now - parseInt(cachedTime)) < 3600000) {
+                    const cachedData = localStorage.getItem(cacheKey);
+                    if (cachedData) {
+                        debug('Using cached data');
+                        const parsedData = JSON.parse(cachedData);
+                        if (Array.isArray(parsedData) && parsedData.length > 0) {
+                            if (loadingIndicator) loadingIndicator.style.display = 'none';
+                            return parsedData;
+                        }
+                    }
+                }
+
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 8000); 
+
+                const response = await fetch(DATA_URL, { 
+                    signal: controller.signal,
+                    cache: 'no-cache' 
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status} ${response.statusText}`);
+                }
+
+                const parsedData = await response.json();
+                debug(`Data parsed successfully. ${parsedData?.length || 0} protocols loaded.`);
+
+                if (!Array.isArray(parsedData)) {
+                    throw new TypeError("Fetched data is not an array.");
+                }
+
+                try {
+                    localStorage.setItem(cacheKey, JSON.stringify(parsedData));
+                    localStorage.setItem(cacheTime, now.toString());
+                } catch (e) {
+                    debug('Could not cache data: ' + e.message);
+                }
+
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+                return parsedData;
+
+            } catch (error) {
+                console.error("Error fetching or parsing protocol data:", error);
+
+                if (loadingIndicator) {
+                    loadingIndicator.style.display = 'flex';
+                    loadingIndicator.classList.add('error');
+                    if (loadingText) {
+                        let errorMsg = "Failed to load protocol data. Check console logs.";
+                        if (error instanceof SyntaxError) {
+                            errorMsg = "Failed to parse protocol data (Invalid JSON format).";
+                        } else if (error instanceof TypeError) {
+                            errorMsg = "Fetched data has unexpected format (not an array).";
+                        } else if (error.name === 'AbortError') {
+                            errorMsg = "Request timed out. Check your network connection.";
+                        } else if (error.message.startsWith("HTTP error")) {
+                            errorMsg = `Failed to fetch protocol data (${error.message}).`;
+                        }
+                        loadingText.innerHTML = `<i class='bx bx-error-circle mr-2'></i> ${errorMsg}`;
+                    }
+                }
+
+                try {
+                    const cachedData = localStorage.getItem('RootRiotData');
+                    if (cachedData) {
+                        debug('Using expired cached data as fallback');
+                        const parsedData = JSON.parse(cachedData);
+                        if (Array.isArray(parsedData) && parsedData.length > 0) {
+
+                            return parsedData;
+                        }
+                    }
+                } catch (e) {
+                    debug('No usable cached data available');
+                }
+
+                return null; 
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            debug('App initializing...');
+
+            detectFeatures();
+
+            const requiredElements = [
+                'loadingIndicator', 'protocolCards', 'paginationContainer',
+                'protocolNav', 'sidebar', 'categoryFilters'
+            ];
+
+            let missingElement = false;
+            for (const id of requiredElements) {
+                if (!document.getElementById(id)) {
+                    console.error(`Initialization failed: Required DOM element #${id} not found.`);
+                    missingElement = true;
+                }
+            }
+
+            if (missingElement) {
+                const body = document.body || document.createElement('body');
+                body.innerHTML = `<div style="color: red; padding: 20px; font-family: sans-serif; text-align: center;">Error: Core UI elements missing. Cannot initialize application.</div>`;
+                return;
+            }
+
+            const fetchedData = await fetchProtocolData();
+
+            if (fetchedData === null || !Array.isArray(fetchedData)) {
+                debug("Initialization stopped due to data fetch failure.");
+                return;
+            }
+
+            protocolData = fetchedData; 
+            debug(`Assigned fetched data (${protocolData.length} items) to global scope.`);
+
+            try {
+                updateDeviceState();
+                loadCheckedItems();
+
+                setTimeout(() => {
+                    renderSidebarProtocols();
+                    initializeMainCategoryFilters();
+                    setupEventListeners();
+                    initializeAnimations();
+                    renderProtocolCards();
+
+                    setTimeout(updateProgress, 300);
+                    debug('App initialized successfully.');
+                }, 10);
+
+            } catch (error) {
+                console.error("Error during initialization steps after data fetch:", error);
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                if (loadingIndicator) {
+                    const loadingText = loadingIndicator.querySelector('.loading-text');
+                    loadingIndicator.style.display = 'flex';
+                    loadingIndicator.classList.add('error');
+                    if (loadingText) loadingText.innerHTML = `<i class='bx bx-error-circle text-2xl text-red-500 mr-2'></i> Error initializing application. Check console.`;
+                }
+            }
+        });
+
+        function updateDeviceState() {
+            const wasMobile = appState.isMobile;
+            appState.isMobile = window.innerWidth < 768;
+
+            if (window.innerWidth >= 2560) {
+                appState.itemsPerPage = 8; 
+            } else if (window.innerWidth >= 1920) {
+                appState.itemsPerPage = 6; 
+            } else if (window.innerWidth >= 1280) {
+                appState.itemsPerPage = 5; 
+            } else if (window.innerWidth >= 768) {
+                appState.itemsPerPage = 4; 
+            } else {
+                appState.itemsPerPage = 3; 
+            }
+
+            appState.hasWideScreen = window.innerWidth >= 1920;
+            document.documentElement.classList.toggle('wide-screen', appState.hasWideScreen);
+
+            debug(`Device state: isMobile=${appState.isMobile}, itemsPerPage=${appState.itemsPerPage}, hasWideScreen=${appState.hasWideScreen}`);
+
+            if (document.readyState === 'complete' && protocolData.length > 0 && 
+                (wasMobile !== appState.isMobile || appState.hasWideScreen !== (window.innerWidth >= 1920))) {
+                renderProtocolCards();
+            }
+        }
+
+        function loadCheckedItems() {
+            try {
+                const saved = localStorage.getItem('checkedItems');
+                if (saved) { appState.checkedItems = JSON.parse(saved); }
+                const testingKeys = Object.keys(appState.checkedItems).filter(key => key.includes('-testing-'));
+                debug(`Loaded ${testingKeys.length} checked testing items`);
+            } catch (e) { 
+                console.error("Error loading checked items:", e); 
+                appState.checkedItems = {}; 
+            }
+        }
+
+        function getPortDisplay(port) {
+            if (port === null || typeof port === 'undefined') return '';
+            const portStr = String(port); if (!portStr) return '';
+            if (portStr.includes(',') || portStr.includes('-') || portStr.includes(' ')) { 
+                return `<span class="port-badge">Ports ${portStr}</span>`; 
+            }
+            else if (/\d+/.test(portStr)) { 
+                return `<span class="port-badge">Port ${portStr}</span>`; 
+            }
+            return '';
+        }
+
+        function renderSidebarProtocols() {
+            debug('Rendering sidebar protocol list...');
+            const protocolNav = document.getElementById('protocolNav');
+            if (!protocolNav) { 
+                console.error("Sidebar render failed: #protocolNav not found."); 
+                return; 
+            }
+
+            if (!protocolData || protocolData.length === 0) {
+                protocolNav.innerHTML = '<p class="text-sm text-neutral-500 px-3">No protocols loaded.</p>';
+                debug('Sidebar render skipped: No protocol data available.');
+                return;
+            }
+
+            const filteredProtocols = getFilteredProtocols();
+
+            if (filteredProtocols.length === 0) {
+                protocolNav.innerHTML = '<p class="text-sm text-neutral-500 px-3">No matching protocols.</p>';
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            const sortedProtocols = [...filteredProtocols]
+                .sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+            const maxVisibleItems = 100; 
+            const actualItems = sortedProtocols.length > maxVisibleItems ? 
+                                sortedProtocols.slice(0, maxVisibleItems) : 
+                                sortedProtocols;
+
+            actualItems.forEach((protocol, index) => {
+                if (!protocol || !protocol.id) return;
+
+                const navItem = document.createElement('div');
+                navItem.className = 'glass-inset py-3 pr-3 cursor-pointer transition-all duration-300 protocol-nav-item';
+                navItem.setAttribute('data-protocol-id', protocol.id);
+                navItem.setAttribute('data-category', protocol.category || 'default');
+
+                if (index < 20) {
+                    navItem.classList.add('fade-in');
+                    navItem.style.animationDelay = `${index * 0.02}s`;
+                }
+
+                const categoryColor = getCategoryColor(protocol.category);
+                navItem.style.setProperty('--nav-item-color', categoryColor.background);
+                navItem.innerHTML = `<div class="flex items-center justify-between text-sm">
+                    <div class="flex items-center overflow-hidden whitespace-nowrap text-ellipsis">
+                        <span class="overflow-hidden whitespace-nowrap text-ellipsis">${protocol.name || 'Unnamed'}</span>
+                    </div>
+                </div>`;
+
+                fragment.appendChild(navItem);
+            });
+
+            protocolNav.innerHTML = '';
+            protocolNav.appendChild(fragment);
+
+            if (sortedProtocols.length > maxVisibleItems) {
+                const message = document.createElement('p');
+                message.className = 'text-xs text-gray-400 px-3 py-2 text-center';
+                message.textContent = `Showing ${maxVisibleItems} of ${sortedProtocols.length} protocols. Use search to narrow results.`;
+                protocolNav.appendChild(message);
+            }
+
+            debug(`Sidebar rendered ${actualItems.length} items.`);
+        }
+
+        function initializeMainCategoryFilters() {
+            debug('Initializing main category filters...');
+            const categoryFilters = document.getElementById('categoryFilters');
+            if (!categoryFilters) { 
+                console.error("Category filter init failed: #categoryFilters not found."); 
+                return; 
+            }
+
+            if (!protocolData || protocolData.length === 0) {
+                debug('Category filter init skipped: No protocol data available.');
+
+                let allCategoryBtn = categoryFilters.querySelector('[data-category="all"]');
+                if (!allCategoryBtn) {
+                    allCategoryBtn = document.createElement('button');
+                    allCategoryBtn.className = 'category-filter active';
+                    allCategoryBtn.setAttribute('data-category', 'all');
+                    allCategoryBtn.textContent = 'All';
+                    categoryFilters.appendChild(allCategoryBtn);
+                } else {
+
+                    const existingFilters = categoryFilters.querySelectorAll('.category-filter:not([data-category="all"])');
+                    existingFilters.forEach(btn => btn.remove());
+                    allCategoryBtn.classList.add('active');
+                }
+                if(allCategoryBtn) allCategoryBtn.style.setProperty('--active-filter-bg', 'var(--primary)');
+                return;
+            }
+
+            const categories = [...new Set(protocolData.map(p => p.category || 'default'))].sort();
+
+            let allCategoryBtn = categoryFilters.querySelector('[data-category="all"]');
+            if (!allCategoryBtn) {
+                allCategoryBtn = document.createElement('button');
+                allCategoryBtn.className = 'category-filter active';
+                allCategoryBtn.setAttribute('data-category', 'all');
+                allCategoryBtn.textContent = 'All';
+                categoryFilters.insertBefore(allCategoryBtn, categoryFilters.firstChild);
+            } else {
+                const existingFilters = categoryFilters.querySelectorAll('.category-filter:not([data-category="all"])');
+                existingFilters.forEach(btn => btn.remove());
+                allCategoryBtn.classList.add('active');
+            }
+            allCategoryBtn.style.setProperty('--active-filter-bg', 'var(--primary)');
+
+            const fragment = document.createDocumentFragment();
+
+            categories.forEach(category => {
+                const categoryBtn = document.createElement('button');
+                categoryBtn.className = 'category-filter';
+                categoryBtn.setAttribute('data-category', category);
+                categoryBtn.textContent = category.charAt(0).toUpperCase() + category.slice(1);
+                fragment.appendChild(categoryBtn);
+            });
+
+            categoryFilters.appendChild(fragment);
+
+            debug(`Main category filters initialized with ${categories.length} categories.`);
+        }
+
+        function getFilteredProtocols() {
+            if (!protocolData || protocolData.length === 0) {
+                return [];
+            }
+
+            try {
+                const lowerSearchTerm = appState.searchTerm.toLowerCase();
+                const currentCategory = appState.currentFilter === 'all' ? null : appState.currentFilter;
+
+                return protocolData.filter(protocol => {
+                    if (!protocol || !protocol.name) { return false; }
+
+                    const protocolCategory = protocol.category || 'default';
+                    if (currentCategory && protocolCategory !== currentCategory) {
+                        return false;
+                    }
+
+                    if (!lowerSearchTerm) {
+                        return true;
+                    }
+
+                    if (protocol.name.toLowerCase().includes(lowerSearchTerm)) {
+                        return true;
+                    }
+
+                    if (protocol.description && protocol.description.toLowerCase().includes(lowerSearchTerm)) {
+                        return true;
+                    }
+
+                    if (protocol.port != null) {
+                        const portStr = String(protocol.port).toLowerCase();
+                        if (portStr.includes(lowerSearchTerm)) {
+                            return true;
+                        }
+
+                        if (/\d/.test(lowerSearchTerm) && matchesPort(protocol.port, lowerSearchTerm)) {
+                            return true;
+                        }
+                    }
+
+                    return false;
+                });
+            } catch (error) {
+                console.error("Error filtering protocol data:", error);
+                return [];
+            }
+        }
+
+        function matchesPort(protocolPort, searchTerm) {
+            if (protocolPort === null || typeof protocolPort === 'undefined' || !searchTerm) return false;
+            const portStr = String(protocolPort).toLowerCase();
+            const searchStr = String(searchTerm).toLowerCase().trim();
+            if (!portStr || !searchStr || !/\d/.test(searchStr)) return false;
+
+            const searchPorts = searchStr.split(',').map(p => p.trim()).filter(p => p !== '');
+            if (searchPorts.length === 0) return false;
+
+            if (searchPorts.includes(portStr)) return true;
+
+            for (const singleSearchPort of searchPorts) {
+
+                if (portStr.includes(',')) {
+                    const protocolPortList = portStr.split(',').map(p => p.trim());
+                    if (protocolPortList.includes(singleSearchPort)) return true;
+                }
+
+                if (portStr.includes('-') && !portStr.includes(',')) {
+                    const [minPort, maxPort] = portStr.split('-').map(p => parseInt(p.trim(), 10));
+                    if (!isNaN(minPort) && !isNaN(maxPort)) {
+                        const searchNum = parseInt(singleSearchPort, 10);
+                        if (!isNaN(searchNum) && searchNum >= minPort && searchNum <= maxPort) return true;
+                    }
+                }
+
+                if (singleSearchPort.includes('-')) {
+                    const [minSearch, maxSearch] = singleSearchPort.split('-').map(p => parseInt(p.trim(), 10));
+                    if (!isNaN(minSearch) && !isNaN(maxSearch)) {
+                        const protocolPortNum = parseInt(portStr, 10);
+                        if (!isNaN(protocolPortNum) && protocolPortNum >= minSearch && protocolPortNum <= maxSearch) return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function renderProtocolCards() {
+
+            if (appState.renderInProgress) {
+                debug("Skipping render - already in progress");
+                return;
+            }
+
+            appState.renderInProgress = true;
+
+            const container = document.getElementById('protocolCards');
+            const pagination = document.getElementById('paginationContainer');
+            const loadingIndicator = document.getElementById('loadingIndicator');
+
+            if (!container || !pagination) {
+                console.error("Render failed: #protocolCards or #paginationContainer missing.");
+                if (loadingIndicator) loadingIndicator.style.display = 'none';
+                appState.renderInProgress = false;
+                return;
+            }
+
+            const currentPageForRender = appState.currentPage;
+            const currentFilterForRender = appState.currentFilter;
+            const currentSearchForRender = appState.searchTerm;
+            debug(`Render Cards: Filter="${currentFilterForRender}", Search="${currentSearchForRender}", Page=${currentPageForRender}`);
+
+            container.innerHTML = '';
+            pagination.style.display = 'none';
+
+            if (appState.observer) appState.observer.disconnect();
+
+            requestAnimationFrame(() => {
+                try {
+                    const filtered = getFilteredProtocols();
+
+                    if (filtered.length === 0) {
+                        showNoResultsMessage(container, pagination, loadingIndicator);
+                    } else {
+                        renderFilteredCards(filtered, container, pagination, currentPageForRender);
+                    }
+
+                    appState.renderInProgress = false;
+                } catch (error) {
+                    console.error("Error during card rendering:", error);
+                    container.innerHTML = `<div class="no-results section-animate visible col-span-full">
+                        <i class='bx bx-error-circle text-4xl text-red-500 mb-2'></i>
+                        <h3>Error Rendering Cards</h3>
+                        <p class="text-gray-400">Check console for details.</p>
+                    </div>`;
+                    pagination.style.display = 'none';
+                    appState.renderInProgress = false;
+                } finally {
+                    if (loadingIndicator && !loadingIndicator.classList.contains('error')) {
+                        loadingIndicator.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function showNoResultsMessage(container, pagination, loadingIndicator) {
+            if (protocolData === null || protocolData.length === 0) {
+                if (!document.querySelector('.loading-indicator.error')) {
+                    container.innerHTML = `<div class="no-results section-animate visible col-span-full">
+                        <i class='bx bx-data text-4xl mb-2 text-gray-500'></i>
+                        <h3 class="text-xl font-semibold mb-2">No Protocol Data</h3>
+                        <p class="text-gray-400">Could not load protocol information.</p>
+                    </div>`;
+                }
+            } else {
+                container.innerHTML = `<div class="no-results section-animate visible col-span-full">
+                    <i class="bx bx-search text-4xl mb-2 text-gray-500"></i>
+                    <h3 class="text-xl font-semibold mb-2">No protocols found</h3>
+                    <p class="text-gray-400">Try adjusting search or category.</p>
+                </div>`;
+            }
+            pagination.style.display = 'none';
+            debug('Render complete: No results.');
+        }
+
+        function renderFilteredCards(filtered, container, pagination, currentPageForRender) {
+
+            const totalPages = Math.ceil(filtered.length / appState.itemsPerPage);
+            let validatedPage = Math.max(1, Math.min(currentPageForRender, totalPages));
+
+            if (validatedPage !== currentPageForRender) {
+                debug(`Page validated: ${currentPageForRender} -> ${validatedPage}`);
+                if (appState.currentPage !== validatedPage) {
+                    appState.currentPage = validatedPage;
+                }
+            }
+
+            const start = (validatedPage - 1) * appState.itemsPerPage;
+            const end = Math.min(start + appState.itemsPerPage, filtered.length);
+            const toRender = filtered.slice(start, end);
+
+            if (toRender.length === 0 && filtered.length > 0) {
+                if (validatedPage > 1) {
+                    appState.currentPage = 1;
+                    renderProtocolCards();
+                    return;
+                } else {
+                    container.innerHTML = `<div class="no-results section-animate visible col-span-full">
+                        <i class='bx bx-error text-4xl text-yellow-500 mb-2'></i>
+                        <h3 class="text-xl font-semibold mb-2 text-yellow-400">Pagination Error</h3>
+                    </div>`;
+                    return;
+                }
+            }
+
+            const fragment = document.createDocumentFragment();
+
+            toRender.forEach((protocol, index) => {
+                const card = createProtocolCard(protocol, index);
+                if (card) {
+                    fragment.appendChild(card);
+                    if (appState.observer) {
+                        appState.observer.observe(card);
+                    }
+                }
+            });
+
+            container.appendChild(fragment);
+
+            updatePagination(totalPages);
+
+            requestAnimationFrame(() => {
+                updateProgress();
+                handleScrollAnimations();
+            });
+
+            debug('Cards rendered successfully');
+        }
+
+        function updatePagination(totalPages) {
+            const container = document.getElementById('paginationContainer');
+            if (!container) return;
+
+            container.innerHTML = '';
+
+            if (totalPages <= 1) {
+                container.style.display = 'none';
+                return;
+            }
+
+            container.style.display = 'flex';
+
+            const currentPage = appState.currentPage;
+
+            const fragment = document.createDocumentFragment();
+
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'pagination-btn';
+            prevBtn.innerHTML = '<i class="bx bx-chevron-left"></i>';
+            prevBtn.disabled = currentPage === 1;
+            prevBtn.setAttribute('aria-label', 'Previous page');
+            prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
+            fragment.appendChild(prevBtn);
+
+            const maxVisible = appState.isMobile ? 3 : 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+            if (endPage - startPage + 1 < maxVisible) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            if (startPage > 1) {
+                const firstBtn = document.createElement('button');
+                firstBtn.className = 'pagination-btn';
+                firstBtn.textContent = '1';
+                firstBtn.setAttribute('aria-label', 'Page 1');
+                firstBtn.addEventListener('click', () => goToPage(1));
+                fragment.appendChild(firstBtn);
+
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'pagination-ellipsis';
+                    ellipsis.textContent = '...';
+                    ellipsis.setAttribute('aria-hidden', 'true');
+                    fragment.appendChild(ellipsis);
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `pagination-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.setAttribute('aria-label', `Page ${i}`);
+                if (i === currentPage) pageBtn.setAttribute('aria-current', 'page');
+                pageBtn.addEventListener('click', () => goToPage(i));
+                fragment.appendChild(pageBtn);
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.className = 'pagination-ellipsis';
+                    ellipsis.textContent = '...';
+                    ellipsis.setAttribute('aria-hidden', 'true');
+                    fragment.appendChild(ellipsis);
+                }
+
+                const lastBtn = document.createElement('button');
+                lastBtn.className = 'pagination-btn';
+                lastBtn.textContent = totalPages;
+                lastBtn.setAttribute('aria-label', `Page ${totalPages}`);
+                lastBtn.addEventListener('click', () => goToPage(totalPages));
+                fragment.appendChild(lastBtn);
+            }
+
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'pagination-btn';
+            nextBtn.innerHTML = '<i class="bx bx-chevron-right"></i>';
+            nextBtn.disabled = currentPage === totalPages;
+            nextBtn.setAttribute('aria-label', 'Next page');
+            nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
+            fragment.appendChild(nextBtn);
+
+            container.appendChild(fragment);
+        }
+
+        function goToPage(page) {
+            debug(`goToPage called: req=${page}, current=${appState.currentPage}`);
+            if (page === appState.currentPage || page < 1) return;
+
+            const filtered = getFilteredProtocols();
+            const totalPages = Math.ceil(filtered.length / appState.itemsPerPage);
+            const targetPage = Math.max(1, Math.min(page, totalPages));
+
+            if (targetPage === appState.currentPage) {
+                debug("goToPage: Target page is same as current after validation.");
+                return;
+            }
+
+            appState.currentPage = targetPage;
+            renderProtocolCards();
+
+            setTimeout(() => {
+                const mainContent = document.getElementById('mainContent');
+                if (mainContent) {
+                    mainContent.scrollTo({
+                        top: 0,
+                        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+                    });
+                }
+            }, 50);
+        }
+
+         function generateListItems(items, type, protocolId) {
+
+           if (!items || items.length === 0) { return '<li class="text-gray-500 text-sm list-item-no-checkbox">None listed.</li>'; }
+           const includeCheckbox = (type === 'testing');
+           const copyButtonHtml = `<button class="copy-command-btn ml-2 p-1 text-neutral-400 hover:text-primary focus:outline-none focus:ring-1 focus:ring-primary-light rounded transition-colors duration-200 inline-flex items-center align-middle" title="Copy command" aria-label="Copy command to clipboard"><i class='bx bx-copy text-sm'></i></button>`;
+           let html = '';
+           const recognizedPrefixes = ["Alternative Metasploit Module:", "msf>"];
+           const separator = ' - ';
+
+           const escapeHtml = (unsafe) => {
+               if (typeof unsafe !== 'string') return unsafe;
+
+               return unsafe
+
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;");
+           };
+
+           const applyCommandHighlighting = (escapedText) => {
+                return escapedText.replace(/`([^`]+)`/g, (match, codeContent) => {
+
+                   const safelyEscapedCodeContent = escapeHtml(codeContent);
+                   const codeTag = `<code class="command-inline">${safelyEscapedCodeContent}</code>`;
+                   return includeCheckbox ? codeTag + copyButtonHtml : codeTag;
+                });
+           };
+
+           for (let i = 0; i < items.length; i++) {
+               const item = items[i]; 
+               if (typeof item !== 'string' || item.trim() === '') continue;
+
+               const key = `${protocolId}-${type}-${i}`;
+               const isChecked = includeCheckbox && appState.checkedItems[key];
+               let processedItemHtml = '';
+               let specialPrefixHandled = false;
+
+               if (includeCheckbox) {
+                   let prefixUsed = null;
+                   for (const prefix of recognizedPrefixes) {
+                       if (item.startsWith(prefix)) { 
+                           prefixUsed = prefix;
+                           break;
+                       }
+                   }
+
+                   if (prefixUsed) {
+                       const separatorIndex = item.indexOf(separator); 
+
+                       if (separatorIndex !== -1) {
+
+                           const rawCommandOrModulePart = item.substring(prefixUsed.length, separatorIndex).trim();
+                           const rawDescriptionPart = item.substring(separatorIndex + separator.length).trim();
+
+                           const escapedCommandOrModulePart = escapeHtml(rawCommandOrModulePart);
+                           let escapedDescriptionPart = escapeHtml(rawDescriptionPart);
+
+                           escapedDescriptionPart = applyCommandHighlighting(escapedDescriptionPart);
+
+                           const highlightedCommandOrModule = `<code class="command-inline">${escapedCommandOrModulePart}</code>${copyButtonHtml}`;
+
+                           processedItemHtml = `
+                               <span class="block">${escapedDescriptionPart}</span>
+                               <span class="block text-xs text-neutral-400 mt-1 flex items-center"> <i class='bx bx-chevron-right text-xs mr-1 text-primary align-middle'></i> ${escapeHtml(prefixUsed)} ${highlightedCommandOrModule}
+                               </span>
+                           `;
+
+                           specialPrefixHandled = true; 
+                       }
+                   }
+               } 
+
+               if (!specialPrefixHandled) {
+                    const escapedItem = escapeHtml(item);
+                    processedItemHtml = applyCommandHighlighting(escapedItem);
+               }
+
+               html += `<li class="flex items-start list-item-animate ${!includeCheckbox ? 'list-item-no-checkbox-container' : ''} mb-2">`;
+               if (includeCheckbox) {
+                   html += `<label class="toggle-container inline-flex mr-3 mt-0.5 flex-shrink-0"><input type="checkbox" class="toggle-input ${type}-check" data-protocol="${protocolId}" data-type="${type}" data-index="${i}" ${isChecked ? 'checked' : ''}><span class="toggle-slider"></span></label><span class="checkmark-animate text-sm flex-grow ${isChecked ? 'line-through text-gray-500' : ''}">${processedItemHtml}</span>`;
+               } else {
+                   html += `<span class="text-sm flex-grow list-item-no-checkbox">${processedItemHtml}</span>`;
+               }
+               html += `</li>`;
+
+           } 
+           return html;
+       }
+
+        function createProtocolCard(protocol, indexOnPage) {
+            try {
+                if (!protocol || !protocol.id || !protocol.name) {
+                    console.warn("Skipping card: invalid data:", protocol);
+                    return null;
+                }
+
+                const card = document.createElement('div');
+                card.className = 'protocol-card glass-card section-animate';
+                card.id = protocol.id;
+
+                const categoryColor = getCategoryColor(protocol.category);
+
+                const totalItems = protocol.testing?.length || 0;
+                let checkedCount = 0;
+                if (protocol.testing) {
+                    for (let i = 0; i < protocol.testing.length; i++) {
+                        if (appState.checkedItems[`${protocol.id}-testing-${i}`]) {
+                            checkedCount++;
+                        }
+                    }
+                }
+
+                const percentage = totalItems > 0 ? Math.round((checkedCount / totalItems) * 100) : 0;
+                const portDisplayHtml = getPortDisplay(protocol.port);
+                const isExpanded = appState.expandedCards.has(protocol.id);
+
+                const vulnerabilitiesList = protocol.vulnerabilities ? 
+                    generateListItems(protocol.vulnerabilities, 'vulnerability', protocol.id) : '';
+                const testingList = protocol.testing ? 
+                    generateListItems(protocol.testing, 'testing', protocol.id) : '';
+                const toolsList = protocol.tools ? 
+                    generateListItems(protocol.tools, 'tool', protocol.id) : '';
+
+                card.innerHTML = `
+                    <div class="category-indicator" style="background: ${categoryColor.background}"></div> 
+                    <div class="card-header p-4 md:p-6 flex flex-col md:flex-row md:items-center justify-between" data-id="${protocol.id}">
+                        <div class="flex-grow mb-3 md:mb-0 md:mr-4">
+                            <div class="flex items-center mb-1 flex-wrap">
+                                <h2 class="text-xl md:text-2xl font-bold mr-3">${protocol.name}</h2>
+                                ${portDisplayHtml}
+                                <span class="category-badge ml-3 mt-1 md:mt-0" style="background: ${categoryColor.background};">${protocol.category || 'other'}</span> 
+                            </div>
+                            <p class="text-gray-400 text-sm">${protocol.description || ''}</p>
+                        </div>
+                        <div class="flex items-center justify-between md:justify-start flex-shrink-0 w-full md:w-auto">
+                            <div class="mr-4 relative text-center md:text-left flex-grow md:flex-grow-0">
+                                <div class="text-xs text-gray-400 mb-1">Testing Progress</div>
+                                <div class="progress-container w-full md:w-32">
+                                    <div class="progress-bar" data-protocol="${protocol.id}" style="width: ${percentage}%"></div>
+                                    <div class="completion-percentage">${percentage}%</div>
+                                </div>
+                            </div>
+                            <button class="expand-btn bg-gray-800 hover:bg-gray-700 w-9 h-9 flex items-center justify-center rounded-full transition-all duration-300 flex-shrink-0" aria-expanded="${isExpanded}">
+                                <i class="bx bx-chevron-down text-2xl transition-transform duration-300 ${isExpanded ? 'transform rotate-180' : ''}"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 pt-2 md:pt-4">
+                            <div class="glass-inset p-4 content-section lg:col-span-1">
+                                <h3 class="text-base md:text-lg font-semibold mb-3 flex items-center"><i class="bx bx-shield-quarter text-red-500 mr-2"></i> Vulnerabilities</h3>
+                                <ul class="space-y-2">${vulnerabilitiesList}</ul>
+                            </div>
+                            <div class="glass-inset p-4 content-section lg:col-span-2">
+                                <h3 class="text-base md:text-lg font-semibold mb-3 flex items-center"><i class="bx bx-test-tube text-yellow-500 mr-2"></i> Testing</h3>
+                                <ul class="space-y-2">${testingList}</ul>
+                            </div>
+                            <div class="glass-inset p-4 content-section lg:col-span-3">
+                                <h3 class="text-base md:text-lg font-semibold mb-3 flex items-center"><i class="bx bx-wrench text-blue-500 mr-2"></i> Tools</h3>
+                                <ul class="space-y-2">${toolsList}</ul>
+                            </div>
+                        </div>
+                    </div>`;
+
+                if (isExpanded) {
+                    card.classList.add('expanded');
+                    const content = card.querySelector('.card-content');
+                    if (content) {
+                        content.style.transition = 'none';
+                        content.style.maxHeight = '1500px';
+                        content.style.opacity = '1';
+                        content.style.visibility = 'visible';
+                        content.style.transform = 'translateY(0)';
+                        content.style.paddingTop = '1rem';
+                        content.style.paddingBottom = '20px';
+
+                        card.querySelectorAll('.content-section').forEach(el => {
+                            el.style.transition = 'none';
+                            el.style.opacity = '1';
+                            el.style.transform = 'translate(0, 0)';
+                            requestAnimationFrame(() => { el.style.transition = ''; });
+                        });
+
+                        requestAnimationFrame(() => { content.style.transition = ''; });
+                    }
+                }
+
+                return card;
+
+            } catch (error) {
+                console.error(`Error creating card for ${protocol?.id}:`, error);
+                return null;
+            }
+        }
+
+        function filterByCategory(category) {
+            debug(`Filtering category: "${category}"`);
+            if (appState.currentFilter === category) return;
+
+            appState.currentFilter = category;
+            appState.currentPage = 1; 
+
+            document.querySelectorAll('#categoryFilters .category-filter').forEach(btn => {
+                const btnCategory = btn.getAttribute('data-category');
+                const isActive = (btnCategory === category);
+                btn.classList.toggle('active', isActive);
+
+                if (isActive) {
+                    const activeColor = (category === 'all')
+                        ? 'var(--primary)'
+                        : getCategoryColor(category).background;
+                    btn.style.setProperty('--active-filter-bg', activeColor);
+                } else {
+                    btn.style.removeProperty('--active-filter-bg');
+                }
+            });
+
+            renderProtocolCards();
+            renderSidebarProtocols();
+        }
+
+        function setupEventListeners() {
+            debug('Setting up listeners...');
+
+            const sidebar = document.getElementById('sidebar');
+            const categoryFilters = document.getElementById('categoryFilters');
+            const protocolCardsContainer = document.getElementById('protocolCards');
+            const protocolNavContainer = document.getElementById('protocolNav');
+            const searchInput = document.getElementById('search');
+            const menuToggle = document.getElementById('menuToggle');
+            const mobileClose = document.getElementById('mobileClose');
+
+            menuToggle?.addEventListener('click', () => sidebar?.classList.add('open'));
+            mobileClose?.addEventListener('click', () => sidebar?.classList.remove('open'));
+
+            document.addEventListener('click', (e) => {
+                if (appState.isMobile && sidebar?.classList.contains('open')) {
+                    if (!sidebar.contains(e.target) && !menuToggle?.contains(e.target)) {
+                        sidebar.classList.remove('open');
+                    }
+                }
+            }, true);
+
+            const debouncedSearch = debounce((value) => {
+                appState.searchTerm = value.trim();
+                appState.currentPage = 1;
+                renderProtocolCards();
+                renderSidebarProtocols();
+            }, 300);
+
+            searchInput?.addEventListener('input', (e) => {
+                debouncedSearch(e.target.value);
+            });
+
+            protocolCardsContainer?.addEventListener('click', (e) => {
+
+                const trigger = e.target.closest('.card-header, .expand-btn');
+                const isInteractiveClick = e.target.closest('a, button:not(.expand-btn), input, label');
+
+                if (trigger && !isInteractiveClick) {
+                    const card = trigger.closest('.protocol-card');
+                    if (card) {
+                        toggleCardExpansion(card);
+                        return;
+                    }
+                }
+
+                const copyButton = e.target.closest('.copy-command-btn');
+                if (copyButton) {
+                    const codeElement = copyButton.previousElementSibling;
+                    if (codeElement && codeElement.tagName === 'CODE' && codeElement.classList.contains('command-inline')) {
+                        const commandText = codeElement.textContent || '';
+                        if (commandText) {
+                            navigator.clipboard.writeText(commandText)
+                                .then(() => {
+                                    const icon = copyButton.querySelector('i');
+                                    if (icon) {
+                                        const originalIcon = icon.className;
+                                        copyButton.classList.add('text-secondary');
+                                        icon.className = 'bx bx-check text-sm';
+                                        copyButton.disabled = true;
+                                        setTimeout(() => {
+                                            copyButton.classList.remove('text-secondary');
+                                            icon.className = originalIcon;
+                                            copyButton.disabled = false;
+                                        }, 1500);
+                                    }
+                                })
+                                .catch(err => {
+                                    console.error('Failed to copy command: ', err);
+                                });
+                        }
+                    }
+                }
+            });
+
+            protocolCardsContainer?.addEventListener('change', (e) => {
+                if (e.target.classList.contains('toggle-input') && e.target.type === 'checkbox') {
+                    handleCheckboxChange(e.target);
+                }
+            });
+
+            categoryFilters?.addEventListener('click', (e) => {
+                const btn = e.target.closest('.category-filter');
+                if (btn && !btn.classList.contains('active')) {
+                    const category = btn.getAttribute('data-category');
+                    if (category) {
+                        filterByCategory(category);
+                    }
+                }
+            });
+
+            protocolNavContainer?.addEventListener('click', (e) => {
+                const item = e.target.closest('[data-protocol-id]');
+                if (item) {
+                    const id = item.getAttribute('data-protocol-id');
+                    if (id) {
+                        scrollToProtocol(id);
+                        if (appState.isMobile) {
+                            sidebar?.classList.remove('open');
+                        }
+                    }
+                }
+            });
+
+            const handleResize = debounce(() => {
+                updateDeviceState();
+            }, 250);
+
+            window.addEventListener('resize', () => {
+                requestAnimationFrame(() => {
+                    handleResize();
+                });
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (document.activeElement && ['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+                    return;
+                }
+
+                const paginationContainer = document.getElementById('paginationContainer');
+                if (!paginationContainer || paginationContainer.style.display === 'none') return;
+
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    if (appState.currentPage > 1) goToPage(appState.currentPage - 1);
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    const totalPages = Math.ceil(getFilteredProtocols().length / appState.itemsPerPage);
+                    if (appState.currentPage < totalPages) goToPage(appState.currentPage + 1);
+                }
+            });
+
+            debug('Listeners setup complete');
+        }
+
+        function handleCheckboxChange(checkbox) {
+            const protocol = checkbox.getAttribute('data-protocol');
+            const type = checkbox.getAttribute('data-type');
+            const index = checkbox.getAttribute('data-index');
+
+            if (!protocol || !type || index === null) {
+                console.warn("Checkbox change handler missing data attributes:", checkbox);
+                return;
+            }
+
+            const key = `${protocol}-${type}-${index}`;
+            const isChecked = checkbox.checked;
+
+            appState.checkedItems[key] = isChecked;
+
+            window.requestIdleCallback(() => {
+                try {
+                    localStorage.setItem('checkedItems', JSON.stringify(appState.checkedItems));
+                } catch (e) {
+                    console.error("Error saving checked items to localStorage:", e);
+                }
+            }, { timeout: 1000 });
+
+            const listItem = checkbox.closest('li');
+            if (listItem) {
+                const textElement = listItem.querySelector('span.checkmark-animate');
+                if (textElement) {
+                    textElement.classList.toggle('line-through', isChecked);
+                    textElement.classList.toggle('text-gray-500', isChecked);
+                }
+            }
+
+            updateProgressForCard(protocol);
+        }
+
+        function updateProgressForCard(protocolId) {
+
+            const protocol = protocolData.find(p => p && p.id === protocolId);
+            if (!protocol) return;
+
+            const cardElement = document.getElementById(protocolId);
+            if (!cardElement) return;
+
+            const bar = cardElement.querySelector(`.progress-bar[data-protocol="${protocolId}"]`);
+            const text = cardElement.querySelector('.completion-percentage');
+
+            if (!bar || !text) return;
+
+            const totalItems = protocol.testing?.length || 0;
+            if (totalItems === 0) {
+                bar.style.width = '0%';
+                text.textContent = 'N/A';
+                return;
+            }
+
+            let checkedCount = 0;
+            if (protocol.testing) {
+                for (let i = 0; i < protocol.testing.length; i++) {
+                    if (appState.checkedItems[`${protocol.id}-testing-${i}`]) {
+                        checkedCount++;
+                    }
+                }
+            }
+
+            const percentage = Math.round((checkedCount / totalItems) * 100);
+
+            if (bar) {
+                bar.style.width = `${percentage}%`;
+                bar.classList.add('animate');
+
+                setTimeout(() => {
+                    bar.classList.remove('animate');
+                }, 2500);
+            }
+
+            if (text) {
+                text.textContent = `${percentage}%`;
+            }
+        }
+
+        function updateProgress() {
+            if (!protocolData || protocolData.length === 0) {
+                debug("Skipping progress update - no data loaded.");
+                return;
+            }
+
+            const visibleCards = document.querySelectorAll('#protocolCards .protocol-card');
+
+            if (visibleCards.length > 0) {
+                let index = 0;
+
+                const updateNextBatch = () => {
+                    const endIndex = Math.min(index + 3, visibleCards.length);
+
+                    for (let i = index; i < endIndex; i++) {
+                        const card = visibleCards[i];
+                        if (card && card.id) {
+                            updateProgressForCard(card.id);
+                        }
+                    }
+
+                    index = endIndex;
+
+                    if (index < visibleCards.length) {
+                        requestAnimationFrame(updateNextBatch);
+                    }
+                };
+
+                requestAnimationFrame(updateNextBatch);
+            }
+        }
+
+        function toggleCardExpansion(card) {
+            if (!card) return;
+
+            const content = card.querySelector('.card-content');
+            const icon = card.querySelector('.expand-btn i');
+            const button = card.querySelector('.expand-btn');
+            const id = card.id;
+
+            if (!content || !icon || !button || !id) {
+                console.warn("Could not toggle expansion, missing elements for card:", id);
+                return;
+            }
+
+            const wasExpanded = card.classList.contains('expanded');
+
+            if (wasExpanded) {
+                appState.expandedCards.delete(id);
+            } else {
+                appState.expandedCards.add(id);
+            }
+
+            button.setAttribute('aria-expanded', !wasExpanded);
+
+            if (wasExpanded) {
+
+                icon.style.transform = 'rotate(0deg)';
+
+                card.querySelectorAll('.content-section').forEach(section => {
+                    section.style.opacity = '0';
+                    section.style.transform = 'translateY(5px)';
+                });
+
+                card.querySelectorAll('.list-item-animate').forEach(item => {
+                    item.style.opacity = '0';
+                });
+
+                setTimeout(() => {
+                    content.style.maxHeight = '0';
+                    content.style.opacity = '0';
+                    content.style.paddingBottom = '0px';
+                    content.style.paddingTop = '0px';
+                    content.style.transform = 'translateY(5px)';
+
+                    setTimeout(() => {
+                        card.classList.remove('expanded');
+                    }, 300);
+                }, 50);
+
+            } else {
+
+                card.classList.add('expanded');
+
+                icon.style.transform = 'rotate(180deg)';
+
+                content.style.opacity = '0';
+                content.style.transform = 'translateY(5px)';
+
+                requestAnimationFrame(() => {
+                    content.style.maxHeight = '1500px';
+                    content.style.opacity = '1';
+                    content.style.transform = 'translateY(0)';
+                    content.style.paddingBottom = '20px';
+                    content.style.paddingTop = '1rem';
+
+                    setTimeout(() => {
+                        card.querySelectorAll('.content-section').forEach((section, i) => {
+                            setTimeout(() => {
+                                section.style.opacity = '1';
+                                section.style.transform = 'translateY(0)';
+
+                                if (i === card.querySelectorAll('.content-section').length - 1) {
+                                    setTimeout(() => {
+                                        card.querySelectorAll('.list-item-animate').forEach((item, j) => {
+                                            setTimeout(() => {
+                                                item.style.opacity = '1';
+                                                item.style.transform = 'translateX(0)';
+                                            }, j * 15);
+                                        });
+                                    }, 50);
+                                }
+                            }, i * 50);
+                        });
+
+                        setTimeout(() => {
+                            if (card.classList.contains('expanded')) {
+                                const cardRect = card.getBoundingClientRect();
+                                const viewportHeight = window.innerHeight;
+
+                                if (cardRect.bottom > viewportHeight || cardRect.top < 0) {
+                                    card.scrollIntoView({
+                                        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+                                        block: 'nearest'
+                                    });
+                                }
+                            }
+                        }, 200);
+                    }, 150);
+                });
+            }
+        }
+
+        function initializeAnimations() {
+            debug('Initializing Intersection Observer for animations');
+
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            const options = {
+                root: null,
+                rootMargin: '0px 0px -40px 0px',
+                threshold: 0.1
+            };
+
+            if (appState.observer) {
+                appState.observer.disconnect();
+            }
+
+            appState.observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+
+                        if (prefersReducedMotion) {
+                            const items = entry.target.querySelectorAll('.list-item-animate, .content-section');
+                            items.forEach(item => {
+                                item.style.opacity = '1';
+                                item.style.transform = 'none';
+                            });
+                        }
+
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, options);
+
+            requestAnimationFrame(handleScrollAnimations);
+        }
+
+        function handleScrollAnimations() {
+            const elements = document.querySelectorAll('.section-animate:not(.visible)');
+            if (!appState.observer) {
+                debug("Observer not initialized in handleScrollAnimations");
+                return;
+            }
+            elements.forEach(element => {
+                appState.observer.observe(element);
+            });
+        }
+
+        const categoryColorCache = {};
+	const PREDEFINED_PALETTE = [
+    'hsl(210, 85%, 30%)', 
+    'hsl(150, 75%, 25%)', 
+    'hsl( 15, 80%, 35%)', 
+    'hsl(320, 70%, 30%)', 
+    'hsl( 40, 90%, 30%)', 
+    'hsl(180, 65%, 25%)', 
+    'hsl(270, 65%, 30%)', 
+    'hsl(  0, 75%, 35%)', 
+    'hsl(235, 75%, 30%)', 
+    'hsl( 90, 60%, 25%)', 
+];
+		function getIndexFromString(str, maxIndex) {
+         if (!str || str.length === 0) str = 'uncategorized';
+         let hash = 0;
+         for (let i = 0; i < str.length; i++) {
+             hash = ((hash << 5) - hash) + str.charCodeAt(i);
+             hash |= 0; 
+         }
+         return Math.abs(hash) % maxIndex;
+    }
+		function parseHsl(hslString) {
+        const match = hslString.match(/hsl\((\d+),\s*(\d+)%?,\s*(\d+)%?\)/);
+        if (match) {
+            return { h: parseInt(match[1]), s: parseInt(match[2]), l: parseInt(match[3]) };
+        }
+        return null; 
+    }
+
+        function getCategoryColor(category) {
+        const categoryKey = (category && typeof category === 'string' && category.trim() !== '') ?
+                              category.toLowerCase() : 'uncategorized';
+
+        if (categoryColorCache[categoryKey]) {
+            return categoryColorCache[categoryKey];
+        }
+
+        const paletteIndex = getIndexFromString(categoryKey, PREDEFINED_PALETTE.length);
+        const backgroundColor = PREDEFINED_PALETTE[paletteIndex];
+
+        let glowColor = 'hsla(258, 70%, 65%, 0.5)'; 
+        const hsl = parseHsl(backgroundColor);
+        if (hsl) {
+            glowColor = `hsla(${hsl.h}, ${Math.min(100, hsl.s + 10)}%, ${Math.min(75, hsl.l + 10)}%, 0.6)`;
+        }
+
+        const result = {
+            background: backgroundColor, 
+            glow: glowColor
+        };
+
+        categoryColorCache[categoryKey] = result;
+        return result;
+    }
+
+        function scrollToProtocol(id) {
+            if (!protocolData || protocolData.length === 0) {
+                debug("Cannot scroll: Protocol data not loaded.");
+                return;
+            }
+
+            const protocol = protocolData.find(p => p && p.id === id);
+            if (!protocol) {
+                debug(`Protocol not found in loaded data: ${id}`);
+                return;
+            }
+
+            const needsFilterChange = appState.currentFilter !== 'all' && 
+                                     protocol.category !== appState.currentFilter;
+
+            if (needsFilterChange) {
+                debug(`Switching filter to '${protocol.category}' for scroll target '${id}'`);
+                filterByCategory(protocol.category);
+                setTimeout(() => findAndScrollToProtocol(id), 300);
+            } else {
+                findAndScrollToProtocol(id);
+            }
+        }
+
+        function findAndScrollToProtocol(id) {
+            const filtered = getFilteredProtocols();
+            const index = filtered.findIndex(p => p && p.id === id);
+
+            if (index === -1) {
+                debug(`Protocol '${id}' not found in currently filtered list.`);
+                return;
+            }
+
+            const targetPage = Math.floor(index / appState.itemsPerPage) + 1;
+
+            if (targetPage !== appState.currentPage) {
+                debug(`Navigating to page ${targetPage} to show '${id}'`);
+                goToPage(targetPage);
+                setTimeout(() => scrollAndHighlight(id), 300);
+            } else {
+                scrollAndHighlight(id);
+            }
+        }
+
+        function scrollAndHighlight(id) {
+            requestAnimationFrame(() => {
+                const element = document.getElementById(id);
+                if (!element) {
+                    setTimeout(() => {
+                        const elementRetry = document.getElementById(id);
+                        if (!elementRetry) {
+                            debug(`Element #${id} not found for highlight after retry.`);
+                            return;
+                        }
+                        performScrollAndHighlight(elementRetry);
+                    }, 100);
+                    return;
+                }
+                performScrollAndHighlight(element);
+            });
+        }
+
+        function performScrollAndHighlight(element) {
+            const id = element.id;
+            const needsExpansion = !element.classList.contains('expanded');
+
+            element.scrollIntoView({
+                behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+                block: 'nearest'
+            });
+
+            setTimeout(() => {
+                if (!document.getElementById(id)) return;
+
+                if (needsExpansion) {
+                    toggleCardExpansion(element);
+                }
+
+                setTimeout(() => {
+                    if (!document.getElementById(id)) return;
+
+                    const protocol = protocolData.find(p => p && p.id === id);
+                    const categoryColor = getCategoryColor(protocol?.category);
+                    const glowColorValue = categoryColor?.glow || 'rgba(139, 92, 246, 0.5)';
+
+                    const originalShadow = getComputedStyle(element).boxShadow;
+                    element.classList.add('highlighting');
+                    element.style.boxShadow = `0 0 20px 5px ${glowColorValue}, ${originalShadow || '0 8px 32px rgba(0, 0, 0, 0.2)'}`;
+
+                    setTimeout(() => {
+                        if (!document.getElementById(id)) return;
+                        element.style.boxShadow = originalShadow || '';
+                        setTimeout(() => {
+                            if (document.getElementById(id)) {
+                                element.classList.remove('highlighting');
+                            }
+                        }, 200);
+                    }, 1500);
+                }, 100);
+            }, 100);
+        }
+    </script>
+</body>
+</html>

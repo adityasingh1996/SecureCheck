@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RootRiot - Protocol Checklist</title>
+
+    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
+
+    <style>
+        /* --- Theme Variables --- */
+        :root {
+            --bg-darker: #02040a;
+            --bg-dark: #0b101b;
+            --bg-card: #111625;
+            
+            --accent-blue: #2563eb;
+            --accent-green: #10b981;
+            
+            /* Strong Blue Border */
+            --glass-border: rgba(37, 99, 235, 0.5); 
+            --sidebar-bg: rgba(2, 6, 23, 0.95);
+            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Manrope', sans-serif; }
+        
+        body { 
+            background-color: var(--bg-darker); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(37, 99, 235, 0.08) 0%, transparent 25%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 25%);
+        }
+
+        /* --- Animated Hexagon Grid --- */
+        .hex-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(30deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(150deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(30deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(150deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(60deg, rgba(255,255,255,0.02) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.02) 75%, rgba(255,255,255,0.02)),
+                linear-gradient(60deg, rgba(255,255,255,0.02) 25%, transparent 25.5%, transparent 75%, rgba(255,255,255,0.02) 75%, rgba(255,255,255,0.02));
+            background-size: 60px 105px;
+            background-position: 0 0, 0 0, 30px 52px, 30px 52px, 0 0, 30px 52px;
+            opacity: 0.3;
+            z-index: -1;
+            pointer-events: none;
+            animation: gridPulse 8s ease-in-out infinite;
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.02); }
+        }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            background: var(--sidebar-bg);
+            height: 100vh; position: fixed; top: 0; left: 0; width: 280px; z-index: 50;
+            padding: 24px; border-right: 1px solid var(--glass-border);
+            display: flex; flex-direction: column; transition: transform 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .content-area { margin-left: 280px; padding: 40px; min-height: 100vh; transition: margin-left 0.3s ease; }
+
+        /* --- Inputs --- */
+        .target-input-group {
+            background: rgba(0,0,0,0.3); border: 1px solid var(--glass-border); border-radius: 8px; padding: 12px; margin-bottom: 20px;
+        }
+        .target-label { font-size: 10px; text-transform: uppercase; color: var(--accent-blue); font-weight: 700; margin-bottom: 4px; display: block; }
+        .sidebar-input {
+            width: 100%; background: transparent; border: none; color: white;
+            font-family: 'Fira Code', monospace; font-size: 13px;
+            border-bottom: 1px solid rgba(37, 99, 235, 0.4); padding: 4px 0; transition: border-color 0.2s;
+        }
+        .sidebar-input:focus { outline: none; border-color: var(--accent-green); }
+
+        /* --- Cards & Lists --- */
+        .glass-card {
+            background: var(--bg-card); border-radius: 12px; border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow); overflow: hidden; transition: transform 0.2s;
+        }
+        .glass-card:hover { border-color: #60a5fa; transform: translateY(-2px); box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.2); }
+        
+        .glass-inset { background: rgba(2, 4, 10, 0.4); border-radius: 8px; border: 1px solid rgba(255,255,255,0.08); padding: 16px; }
+        
+        .category-indicator { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; }
+
+        /* Command Code Styling */
+        .command-wrapper {
+            display: inline-flex; align-items: center; background: rgba(0,0,0,0.4); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; margin: 4px 0;
+            max-width: 100%;
+        }
+        .command-inline {
+            font-family: 'Fira Code', monospace; color: #e2e8f0; padding: 4px 8px;
+            font-size: 0.85em; overflow-x: auto; white-space: pre-wrap; word-break: break-all;
+        }
+        .copy-btn {
+            color: #94a3b8; padding: 4px 8px; border-left: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer; transition: color 0.2s; display: flex; align-items: center;
+        }
+        .copy-btn:hover { color: white; background: rgba(255,255,255,0.1); }
+
+        /* Pill Styling */
+        .pill-item {
+            font-size: 0.75rem; 
+            padding: 4px 10px; 
+            border-radius: 6px; 
+            border: 1px solid rgba(255,255,255,0.3); 
+            background: transparent;
+            font-weight: 500;
+        }
+        .pill-item.blue { border-color: rgba(37, 99, 235, 0.5); color: #60a5fa; }
+        .pill-item.red { border-color: rgba(248, 113, 113, 0.5); color: #f87171; }
+
+        /* Loot Area */
+        .loot-textarea {
+            width: 100%; min-height: 80px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 6px; color: #d1d5db; padding: 10px; font-family: 'Fira Code', monospace; font-size: 12px;
+            resize: vertical; transition: border-color 0.2s;
+        }
+        .loot-textarea:focus { outline: none; border-color: var(--accent-blue); }
+
+        /* Utilities */
+        .toggle-container { width: 44px; height: 24px; position: relative; flex-shrink: 0; }
+        .toggle-slider { position: absolute; top:0; left:0; right:0; bottom:0; background: rgba(255,255,255,0.1); border-radius: 34px; transition:.4s; border:1px solid rgba(255,255,255,0.2); cursor: pointer; }
+        .toggle-slider:before { position: absolute; content:""; height:16px; width:16px; left:3px; bottom:3px; background:#94a3b8; transition:.4s; border-radius:50%; }
+        .toggle-input:checked + .toggle-slider { background: rgba(16, 185, 129, 0.2); border-color: var(--accent-green); }
+        .toggle-input:checked + .toggle-slider:before { transform: translateX(20px); background: var(--accent-green); }
+        .toggle-input { display:none; }
+
+        .progress-container { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; width: 100%; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent-blue), #8b5cf6); width: 0; transition: width 0.5s ease; }
+
+        .category-filter {
+            padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600;
+            border: 1px solid var(--glass-border); background: var(--bg-card); color: #94a3b8;
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 6px;
+        }
+        .category-filter:hover { color: white; border-color: rgba(255,255,255,0.5); }
+        .category-filter.active { border-color: transparent; color: white; box-shadow: 0 0 15px rgba(37, 99, 235, 0.2); }
+        
+        .category-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+        .protocol-nav-item {
+            padding: 10px; border-radius: 6px; font-size: 13px; color: #94a3b8; cursor: pointer; transition: all 0.2s; border-left: 3px solid transparent;
+        }
+        .protocol-nav-item:hover { background: rgba(37, 99, 235, 0.1); color: white; }
+        .protocol-nav-item.active { background: rgba(37, 99, 235, 0.15); color: white; border-left-color: var(--accent-blue); }
+        
+        /* --- MOBILE OPTIMIZATIONS --- */
+        @media (max-width: 1024px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .content-area { margin-left: 0; padding: 20px; padding-bottom: 100px; }
+        }
+        
+        .fade-in { animation: fadeIn 0.5s ease forwards; opacity: 0; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-darker); }
+        ::-webkit-scrollbar-thumb { background: rgba(37, 99, 235, 0.3); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(37, 99, 235, 0.6); }
+    </style>
+</head>
+
+<body class="antialiased">
+
+    <div class="hex-grid"></div>
+
+    <!-- Mobile Header/Nav -->
+    <button id="menuToggle" class="fixed top-4 left-4 z-50 lg:hidden p-2 rounded-md bg-gray-800 text-white border border-blue-500/30 shadow-lg">
+        <i class="bx bx-menu text-2xl"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="flex flex-col mb-6 flex-shrink-0">
+            <div class="flex items-center justify-between mb-6">
+                <h1 class="text-xl font-bold text-white tracking-tight">
+                    <a href="/" class="text-xl font-bold tracking-tight text-white">
+                    Root<span class="text-blue-500">Riot</span>
+                </a>
+                </h1>
+                <button id="mobileClose" class="lg:hidden text-gray-400 hover:text-white">
+                    <i class="bx bx-x text-2xl"></i>
+                </button>
+            </div>
+            
+            <!-- Feature 1: Inputs -->
+            <div class="target-input-group">
+                <div class="mb-3">
+                    <label class="target-label"><i class='bx bx-target-lock'></i> Target IP (RHOST)</label>
+                    <input type="text" id="rhostInput" class="sidebar-input" placeholder="192.168.1.1" value="">
+                </div>
+                <div>
+                    <label class="target-label"><i class='bx bx-user'></i> Target User (RUSER)</label>
+                    <input type="text" id="ruserInput" class="sidebar-input" placeholder="admin" value="">
+                </div>
+            </div>
+
+            <div class="relative mb-4">
+                <input type="text" id="search" class="w-full bg-blue-900/10 border border-blue-500/20 rounded-lg py-2 pl-9 pr-3 text-sm text-gray-300 focus:outline-none focus:border-blue-500" placeholder="Search...">
+                <i class="bx bx-search absolute left-3 top-2.5 text-gray-500"></i>
+            </div>
+            
+            <!-- Link to new Toolkit App -->
+            <a href="toolkit" class="flex items-center gap-2 text-gray-400 hover:text-white text-sm font-bold p-2 rounded hover:bg-blue-900/20 transition-colors mt-4 border border-gray-800 hover:border-blue-500/50">
+                <i class='bx bx-wrench'></i> Open Toolkit
+            </a>
+        </div>
+
+        <div class="flex-grow flex flex-col min-h-0">
+            <h2 class="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3 px-1">Protocols</h2>
+            <div class="overflow-y-auto space-y-1 pr-1" id="protocolNav"></div>
+        </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="content-area" id="mainContent">
+        <header class="mb-8 fade-in">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-blue-500/30 bg-blue-900/20 backdrop-blur-sm mb-4">
+                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                <span class="text-xs font-medium text-blue-200 uppercase tracking-wider">Live Session</span>
+            </div>
+            <h1 class="text-4xl font-bold text-white mb-2">Protocol Checklist</h1>
+            <p class="text-gray-400 max-w-2xl">Configured targets will automatically update command strings.</p>
+        </header>
+
+        <div id="categoryFilters" class="flex flex-wrap gap-2 mb-8 fade-in" style="animation-delay: 0.1s;"></div>
+
+        <!-- Loading State -->
+        <div class="flex justify-center items-center py-12" id="loadingIndicator">
+            <i class='bx bx-loader-alt bx-spin text-3xl text-blue-500'></i>
+            <span class="ml-3 text-gray-400">Initializing...</span>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6" id="protocolCards"></div>
+        
+        <!-- Pagination Container -->
+        <div id="paginationContainer" class="flex justify-center gap-2 mt-12"></div>
+    </main>
+
+    <script>
+        // --- DATA SOURCE ---
+        const DATA_URL = 'Data'; 
+
+        const SAMPLE_DATA = [
+            {
+                id: "ftp-01", name: "FTP", port: "21", category: "file-transfer",
+                description: "Standard file transfer protocol.",
+                testing: [
+                    "Anonymous Login `ftp target.com`",
+                    "Brute force `hydra -l admin -P rockyou.txt ftp://target.com`"
+                ],
+                tools: ["nmap", "hydra"],
+                vulnerabilities: ["Anonymous Auth", "Cleartext Creds"]
+            },
+            {
+                id: "ssh-02", name: "SSH", port: "22", category: "remote-access",
+                description: "Secure Shell protocol.",
+                testing: [
+                    "User Enum `ssh-audit {{TARGET}}`",
+                    "Brute Force `hydra -l {{USER}} -P rockyou.txt ssh://{{TARGET}}`"
+                ],
+                tools: ["ssh-audit", "hydra"],
+                vulnerabilities: ["Weak Ciphers", "User Enumeration"]
+            }
+        ];
+
+        const appState = {
+            data: [],
+            currentFilter: 'all',
+            searchTerm: '',
+            checkedItems: JSON.parse(localStorage.getItem('checkedItems')) || {},
+            expandedCards: new Set(),
+            currentPage: 1,
+            itemsPerPage: 5,
+            targetConfig: { ip: '', user: '' }
+        };
+
+        // --- INIT ---
+        async function init() {
+            const loading = document.getElementById('loadingIndicator');
+            try {
+                const res = await fetch(DATA_URL);
+                if(res.ok) {
+                    appState.data = await res.json();
+                } else {
+                    throw new Error('Fetch failed');
+                }
+            } catch(e) {
+                console.warn("Using Sample Data (Fetch failed or local file restriction)");
+                appState.data = SAMPLE_DATA;
+            }
+
+            loading.style.display = 'none';
+            
+            // 2. Render
+            renderFilters();
+            renderSidebar();
+            renderCards();
+            setupListeners();
+        }
+
+        // --- COLOR GENERATOR ---
+        function generateColor(str) {
+            if (!str) return '#64748b';
+            const colors = [
+                '#2563eb', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#f43f5e'
+            ];
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return colors[Math.abs(hash) % colors.length];
+        }
+
+        // --- RENDER LOGIC ---
+        function renderFilters() {
+            const container = document.getElementById('categoryFilters');
+            const categories = ['all', ...new Set(appState.data.map(d => d.category || 'other'))].sort();
+            
+            container.innerHTML = categories.map(cat => {
+                const color = cat === 'all' ? '#2563eb' : generateColor(cat);
+                const isActive = appState.currentFilter === cat;
+                const bgStyle = isActive ? `background: ${color}; border-color: ${color}; color: white; box-shadow: 0 0 15px ${color}40;` : '';
+                
+                return `
+                <button class="category-filter ${isActive ? 'active' : ''}" 
+                        style="${bgStyle}"
+                        onclick="setFilter('${cat}')">
+                    <div class="category-dot" style="background: ${color}"></div>
+                    ${cat.charAt(0).toUpperCase() + cat.slice(1)}
+                </button>
+                `;
+            }).join('');
+        }
+
+        function renderSidebar() {
+            const container = document.getElementById('protocolNav');
+            const filtered = getFilteredData();
+            container.innerHTML = filtered.map(p => `
+                <div class="protocol-nav-item ${appState.expandedCards.has(p.id) ? 'active' : ''}" onclick="scrollToCard('${p.id}')">
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium truncate pr-2">${p.name}</span>
+                        <span class="text-[10px] text-gray-500 font-mono border border-gray-700 rounded px-1">${p.port || '?'}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderCards() {
+            const container = document.getElementById('protocolCards');
+            const filtered = getFilteredData();
+            
+            const start = (appState.currentPage - 1) * appState.itemsPerPage;
+            const end = start + appState.itemsPerPage;
+            const pageData = filtered.slice(start, end);
+
+            if(pageData.length === 0) {
+                container.innerHTML = `<div class="text-center text-gray-500 py-10">No protocols found.</div>`;
+                document.getElementById('paginationContainer').innerHTML = '';
+                return;
+            }
+
+            container.innerHTML = pageData.map(p => createCardHTML(p)).join('');
+            renderPagination(filtered.length);
+            
+            document.querySelectorAll('.glass-card').forEach((card, idx) => {
+                card.style.animationDelay = `${idx * 0.05}s`;
+                card.classList.add('fade-in');
+            });
+        }
+
+        // --- HTML GENERATORS ---
+        function createCardHTML(p) {
+            const isExpanded = appState.expandedCards.has(p.id);
+            const color = generateColor(p.category);
+            
+            const tests = p.testing || [];
+            const total = tests.length;
+            let checked = 0;
+            tests.forEach((_, i) => { if(appState.checkedItems[`${p.id}-${i}`]) checked++; });
+            const percent = total === 0 ? 0 : Math.round((checked/total)*100);
+
+            return `
+            <div class="glass-card fade-in" id="${p.id}">
+                <div class="category-indicator" style="background: ${color}"></div>
+                <div class="p-6 cursor-pointer card-header" onclick="toggleCard('${p.id}')">
+                    <div class="flex flex-col md:flex-row justify-between gap-4">
+                        <div class="flex-grow">
+                            <div class="flex flex-wrap items-center gap-3 mb-2"> 
+                                <h2 class="text-xl font-bold text-white">${p.name}</h2>
+                                ${p.port ? `<span class="text-xs bg-[#111625] text-gray-400 px-2 py-0.5 rounded border border-blue-500/20 font-mono">${p.port}</span>` : ''}
+                            </div>
+                            <p class="text-sm text-gray-400 overflow-hidden break-words">${p.description || ''}</p>
+                        </div>
+                        <div class="min-w-[140px] flex items-center justify-end gap-4">
+                            <div class="w-full">
+                                <div class="flex justify-between text-xs text-gray-500 mb-1">
+                                    <span>Progress</span>
+                                    <span>${percent}%</span>
+                                </div>
+                                <div class="progress-container">
+                                    <div class="progress-bar" style="width: ${percent}%; background: ${color}"></div>
+                                </div>
+                            </div>
+                            <i class='bx bx-chevron-down text-2xl transition-transform ${isExpanded ? "rotate-180" : ""}'></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="${isExpanded ? 'block' : 'hidden'} border-t border-blue-600 bg-black/20">
+                    <div class="p-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        
+                        <div class="glass-inset">
+                            <h3 class="text-sm font-bold text-yellow-500 mb-3 flex items-center gap-2"><i class='bx bx-test-tube'></i> Checklist</h3>
+                            <ul class="space-y-3">
+                                ${tests.length > 0 ? tests.map((t, i) => {
+                                    const processedText = processText(t);
+                                    const key = `${p.id}-${i}`;
+                                    const isChecked = appState.checkedItems[key];
+                                    return `
+                                    <li class="flex items-start gap-3 group">
+                                        <label class="toggle-container mt-0.5">
+                                            <input type="checkbox" class="toggle-input" onchange="toggleCheck('${p.id}', '${i}')" ${isChecked ? 'checked' : ''}>
+                                            <span class="toggle-slider"></span>
+                                        </label>
+                                        <div class="text-sm text-gray-300 break-words flex-1 min-w-0 ${isChecked ? 'line-through opacity-50' : ''}">
+                                            ${processedText}
+                                        </div>
+                                    </li>`;
+                                }).join('') : '<li class="text-sm text-gray-500">No items</li>'}
+                            </ul>
+                        </div>
+
+                        <div class="space-y-6">
+                            <div class="glass-inset">
+                                <h3 class="text-sm font-bold text-red-500 mb-3 flex items-center gap-2"><i class='bx bx-bug'></i> Vulnerabilities</h3>
+                                <div class="flex flex-wrap gap-2 mb-5">
+                                    ${(p.vulnerabilities||[]).map(v => `<span class="pill-item red">${v}</span>`).join('')}
+                                </div>
+                                <h3 class="text-sm font-bold text-blue-500 mb-3 flex items-center gap-2"><i class='bx bx-wrench'></i> Tools</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    ${(p.tools||[]).map(t => `<span class="pill-item blue">${t}</span>`).join('')}
+                                </div>
+                            </div>
+
+                            <!-- Loot -->
+                            <div class="glass-inset border-l-2 border-l-purple-500">
+                                <h3 class="text-sm font-bold text-purple-400 mb-2 flex items-center gap-2"><i class='bx bx-notepad'></i> Notes & Loot</h3>
+                                <textarea class="loot-textarea" data-id="${p.id}" placeholder="Credentials, hashes..." oninput="saveLoot(this)">${localStorage.getItem('loot-'+p.id) || ''}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+        }
+
+        // --- HELPERS ---
+
+        function processText(text) {
+            const ip = appState.targetConfig.ip || '192.168.1.1';
+            const user = appState.targetConfig.user || 'admin';
+            
+            let processed = text
+                .replace(/{{TARGET}}/gi, ip)
+                .replace(/target\.com/gi, ip)
+                .replace(/<IP>/gi, ip)
+                .replace(/\[IP\]/gi, ip)
+                .replace(/\bRHOST\b/g, ip)
+                .replace(/{{USER}}/gi, user)
+                .replace(/<USER>/gi, user);
+
+            return processed.replace(/`([^`]+)`/g, (match, code) => {
+                const safeCode = code.replace(/"/g, '&quot;').replace(/'/g, "\\'"); 
+                return `
+                <span class="command-wrapper">
+                    <code class="command-inline">${code}</code>
+                    <span class="copy-btn" onclick="copyToClipboard('${safeCode}', this)" title="Copy">
+                        <i class='bx bx-copy'></i>
+                    </span>
+                </span>`;
+            });
+        }
+
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalIcon = btn.innerHTML;
+                btn.innerHTML = "<i class='bx bx-check text-green-400'></i>";
+                setTimeout(() => btn.innerHTML = originalIcon, 1500);
+            });
+        }
+
+        function setupListeners() {
+            document.getElementById('search').addEventListener('input', debounce((e) => {
+                appState.searchTerm = e.target.value;
+                appState.currentPage = 1;
+                renderCards();
+                renderSidebar();
+            }, 300));
+
+            const ipInput = document.getElementById('rhostInput');
+            const userInput = document.getElementById('ruserInput');
+            
+            ipInput.addEventListener('input', (e) => {
+                appState.targetConfig.ip = e.target.value;
+                renderCards(); 
+            });
+            userInput.addEventListener('input', (e) => {
+                appState.targetConfig.user = e.target.value;
+                renderCards();
+            });
+
+            document.getElementById('menuToggle').addEventListener('click', () => document.getElementById('sidebar').classList.add('open'));
+            document.getElementById('mobileClose').addEventListener('click', () => document.getElementById('sidebar').classList.remove('open'));
+        }
+
+        function saveLoot(el) { localStorage.setItem('loot-'+el.dataset.id, el.value); }
+
+        function getFilteredData() {
+            return appState.data.filter(p => {
+                const s = (appState.searchTerm || '').toLowerCase();
+                const nameMatch = (p.name || '').toLowerCase().includes(s);
+                const portMatch = (p.port + '').toLowerCase().includes(s);
+                const matchesS = nameMatch || portMatch;
+                const matchesC = appState.currentFilter === 'all' || p.category === appState.currentFilter;
+                return matchesS && matchesC;
+            });
+        }
+        function toggleCard(id) {
+            if(appState.expandedCards.has(id)) appState.expandedCards.delete(id);
+            else appState.expandedCards.add(id);
+            renderCards();
+            renderSidebar();
+        }
+        function toggleCheck(id, idx) {
+            const k = `${id}-${idx}`;
+            appState.checkedItems[k] = !appState.checkedItems[k];
+            localStorage.setItem('checkedItems', JSON.stringify(appState.checkedItems));
+            renderCards();
+        }
+        function setFilter(cat) {
+            appState.currentFilter = cat;
+            appState.currentPage = 1;
+            renderCards();
+            renderFilters();
+            renderSidebar(); // Update sidebar list too
+        }
+        
+        function scrollToCard(id) {
+            const p = appState.data.find(d => d.id === id);
+            if(appState.currentFilter !== 'all' && p.category !== appState.currentFilter) setFilter('all');
+            
+            const filtered = getFilteredData();
+            const index = filtered.findIndex(d => d.id === id);
+            if (index !== -1) {
+                const targetPage = Math.floor(index / appState.itemsPerPage) + 1;
+                appState.currentPage = targetPage;
+            }
+
+            appState.expandedCards.add(id);
+            renderCards();
+            
+            if (window.innerWidth < 1024) document.getElementById('sidebar').classList.remove('open');
+
+            setTimeout(() => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const offset = 100; 
+                    const elementPosition = el.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - offset;
+                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                }
+            }, 350);
+        }
+
+        function renderPagination(total) {
+            const pages = Math.ceil(total / appState.itemsPerPage);
+            const cont = document.getElementById('paginationContainer');
+            
+            if(pages <= 1) { cont.innerHTML = ''; return; }
+            
+            if (window.innerWidth < 640) {
+                const prevDisabled = appState.currentPage === 1 ? 'opacity-50 pointer-events-none' : '';
+                const nextDisabled = appState.currentPage === pages ? 'opacity-50 pointer-events-none' : '';
+                
+                cont.innerHTML = `
+                    <button class="w-10 h-10 rounded bg-gray-800 text-white flex items-center justify-center ${prevDisabled}" onclick="appState.currentPage--; renderCards(); window.scrollTo(0,0)">
+                        <i class='bx bx-chevron-left text-xl'></i>
+                    </button>
+                    <span class="text-sm text-gray-400 flex items-center px-4 font-mono">Page ${appState.currentPage}/${pages}</span>
+                    <button class="w-10 h-10 rounded bg-gray-800 text-white flex items-center justify-center ${nextDisabled}" onclick="appState.currentPage++; renderCards(); window.scrollTo(0,0)">
+                        <i class='bx bx-chevron-right text-xl'></i>
+                    </button>
+                `;
+            } else {
+                let h = '';
+                for(let i=1; i<=pages; i++) h += `<button class="w-8 h-8 rounded bg-gray-800 text-white ${appState.currentPage===i?'bg-blue-600':''}" onclick="appState.currentPage=${i};renderCards();window.scrollTo(0,0)">${i}</button>`;
+                cont.innerHTML = h;
+            }
+        }
+        
+        function debounce(f,d) { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>f(...a),d); }; }
+
+        init();
+    </script>
+</body>
+</html>
